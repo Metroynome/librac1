@@ -1,5 +1,5 @@
-#ifndef _LIBGC_PLAYER_H_
-#define _LIBGC_PLAYER_H_
+#ifndef _LIBRAC1_PLAYER_H_
+#define _LIBRAC1_PLAYER_H_
 
 #include <tamtypes.h>
 #include "types.h"

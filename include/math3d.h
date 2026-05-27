@@ -16,17 +16,18 @@
 # Review ps2sdk README & LICENSE files for further details.
 */
 
-#ifndef _LIBGC_MATH3D_H_
-#define _LIBGC_MATH3D_H_
+#ifndef _LIBRAC1_MATH3D_H_
+#define _LIBRAC1_MATH3D_H_
 
 #include <tamtypes.h>
 #include "types.h"
 
 typedef float VECTOR[4] __attribute__((__aligned__(16)));
 typedef float vec2[2] __attribute__((__aligned__(16)));
-typedef float vec3[3] __attribute__((__aligned__(16)));
-typedef float vec4[4] __attribute__((__aligned__(16)));
+typedef float vec3[3]
 typedef float MATRIX[16] __attribute__((__aligned__(16)));
+typedef VECTOR vec4;
+
 
 typedef struct vec2f {
 /* 0x0 */ float x;
@@ -101,4 +102,4 @@ void matrix_transpose(MATRIX output, MATRIX input0);
 void matrix_unit(MATRIX output);
 float matrix_determinant(MATRIX input0);
 
-#endif // _LIBGC_MATH3D_H_
+#endif // _LIBRAC1_MATH3D_H_

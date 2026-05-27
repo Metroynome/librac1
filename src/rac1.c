@@ -1,4 +1,4 @@
-#include "gc.h"
+#include "rac1.h"
 #include "player.h"
 
 // 
@@ -14,7 +14,7 @@ extern void playerPadUpdate(void);
  * RETURN :
  * AUTHOR :
  */
-void gcPreUpdate(void)
+void racPreUpdate(void)
 {
 		
 }
@@ -28,7 +28,7 @@ void gcPreUpdate(void)
  * RETURN :
  * AUTHOR :
  */
-void gcPostUpdate(void)
+void racPostUpdate(void)
 {
 	padUpdate();
 	playerPadUpdate();

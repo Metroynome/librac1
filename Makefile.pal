@@ -1,5 +1,5 @@
-EE_LIB_NAME = libgcpal.a
-EE_DEFS = -DGC_PAL -DRAC2_PAL
+EE_LIB_NAME = librac1pal.a
+EE_DEFS = -DRAC1_PAL
 
 include ${CURDIR}/Makefile.defs
 include $(PS2SDK)/samples/Makefile.pref

@@ -5,18 +5,18 @@
  * AUTHOR :			
  */
 
-#ifndef _LIBGC_STDIO_H_
-#define _LIBGC_STDIO_H_
+#ifndef _LIBRAC1_STDIO_H_
+#define _LIBRAC1_STDIO_H_
 
 #include "types.h"
 
 
 //--------------------------------------------------------
-__LIBGC_INLINE__ int sprintf(char * buffer, const char * format, ...);
-__LIBGC_INLINE__ int snprintf(char * buffer, long n, const char * format, ...);
-__LIBGC_INLINE__ int printf(const char * format, ...);
+__LIBRAC1_INLINE__ int sprintf(char * buffer, const char * format, ...);
+__LIBRAC1_INLINE__ int snprintf(char * buffer, long n, const char * format, ...);
+__LIBRAC1_INLINE__ int printf(const char * format, ...);
 
-__LIBGC_INLINE__ int sce_snprintf(char * buffer, long n, const char * format, ...);
+__LIBRAC1_INLINE__ int sce_snprintf(char * buffer, long n, const char * format, ...);
 
 //--------------------------------------------------------
 #ifdef DEBUG
@@ -27,4 +27,4 @@ __LIBGC_INLINE__ int sce_snprintf(char * buffer, long n, const char * format, ..
 #endif
 
 
-#endif // _LIBGC_STDIO_H_
+#endif // _LIBRAC1_STDIO_H_

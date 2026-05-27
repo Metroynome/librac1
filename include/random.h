@@ -1,5 +1,5 @@
-#ifndef _LIBGC_RANDOM_H_
-#define _LIBGC_RANDOM_H_
+#ifndef _LIBRAC1_RANDOM_H_
+#define _LIBRAC1_RANDOM_H_
 
 #include <tamtypes.h>
 #include "math.h"
@@ -97,4 +97,4 @@ float randRot(void);
 
 void randSphere(VECTOR output, float min, float max);
 
-#endif // _LIBGC_RANDOM_H_
+#endif // _LIBRAC1_RANDOM_H_

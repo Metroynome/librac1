@@ -1,8 +1,11 @@
-
-#define GAME_ACTIVE                         (0x00241BD0)
-#define SCENE_LOADED                        (0x002459C8)
-// currently only for NTSCU
-#define GAME_MAP_ID                         (0x001507E0)
+#ifdef RAC1_NTSCJ
+#define gameMode (0x0015f6a8)
+#define Level (0x0015ee84)
+#else
+// NTSCU and PAL are the same
+#define gameMode (0x0015f5c4)
+#define Level (0x0015ed84)
+#endif
 
 // fixed address function
 #define FUNCTION(name, address) \
@@ -63,41 +66,30 @@ name:														\
 	.type	__LocalGetAddress,@function;
 	.ent	__LocalGetAddress,0;
 __LocalGetAddress:
-	// if scene is loading, then we have no address
-	li $v1, 1;
-	lw $v0, SCENE_LOADED;
-	bne $v0, $v1, __LocalGetAddress_exit;
+	// if GAME_MODE_NORMAL (walking, no puzzle, not paused)
+	lw $v0, gameMode;
+	bne $v0, zero, __LocalGetAddress_exit;
 	li $v0, 0;
 
 	// if in menus then return lobby address
-	lw $v0, GAME_MAP_ID;
-  li $v1, 39;
-	beq $v0, $v1, __LocalGetAddress_exit;
-	lw $v0, 0($a0)
+	// lw $v0, GAME_MAP_ID;
+	// li $v1, 39;
+	// beq $v0, $v1, __LocalGetAddress_exit;
+	// lw $v0, 0($a0)
 
-	// if not in game then no address
-	lw $v0, GAME_ACTIVE;
-	beq $v0, $zero, __LocalGetAddress_exit;
-	nop;
-
-	// otherwise in game
-	// return address by map
-	lw $v0, GAME_MAP_ID;
+	// otherwise level loaded
+	// return address by level
+	lw $v0, Level;
 	
-	// map local map ids (50+) to real map ids (40+)
-	addiu $v1, $v0, -10;
-	slti $s0, $v0, 50;
-	movz $v0, $v1, $s0;
-
-	// return 0 if map is not between 40 and 50
-	addiu $v1, $v0, -40
-	sltiu $v0, $v1, 10
+	// return 0 if level is not between 0 and 18
+	sltiu $v1, $v0, 19
 	beqzl $v0, __LocalGetAddress_exit;
 	move $v0, $zero;
-
-	// load offset into VariableAddress struct by map id
-	sll $v1, $v1, 2; // multiply map id [0,9] by 4
-	addiu $v0, $v1, 4; // offset by 4 to skip lobby address
+	
+	// load offset into VariableAddress struct by level id
+	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	// offset by 4 to skip lobby address
+	// addiu $v0, $v1, 4;
 
 	// load address from struct
 	addu $a0, $v0;
@@ -120,41 +112,30 @@ __LocalGetAddress_exit:
 	.type	GetAddress,@function;
 	.ent	GetAddress,0;
 GetAddress:
-	// if scene is loading, then we have no address
-	li $v1, 1;
-	lw $v0, SCENE_LOADED;
-	bne $v0, $v1, GetAddress_exit;
+	// if GAME_MODE_NORMAL (walking, no puzzle, not paused)
+	lw $v0, gameMode;
+	bne $v0, zero, GetAddress_exit;
 	li $v0, 0;
 
 	// if in menus then return lobby address
-	lw $v0, GAME_MAP_ID;
-  li $v1, 39;
-	beq $v0, $v1, GetAddress_exit;
-	lw $v0, 0($a0)
+	// lw $v0, GAME_MAP_ID;
+	// li $v1, 39;
+	// beq $v0, $v1, GetAddress_exit;
+	// lw $v0, 0($a0)
 
-	// if not in game then no address
-	lw $v0, GAME_ACTIVE;
-	beq $v0, $zero, GetAddress_exit;
-	nop;
-
-	// otherwise in game
-	// return address by map
-	lw $v0, GAME_MAP_ID;
+	// otherwise level loaded
+	// return address by level
+	lw $v0, Level;
 	
-	// map local map ids (50+) to real map ids (40+)
-	addiu $v1, $v0, -10;
-	slti $t0, $v0, 50;
-	movz $v0, $v1, $t0;
-
-	// return 0 if map is not between 40 and 50
-	addiu $v1, $v0, -40
-	sltiu $v0, $v1, 10
+	// return 0 if level is not between 0 and 18
+	sltiu $v1, $v0, 19
 	beqzl $v0, GetAddress_exit;
 	move $v0, $zero;
-
-	// load offset into VariableAddress struct by map id
-	sll $v1, $v1, 2; // multiply map id [0,9] by 4
-	addiu $v0, $v1, 4; // offset by 4 to skip lobby address
+	
+	// load offset into VariableAddress struct by level id
+	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	// offset by 4 to skip lobby address
+	// addiu $v0, $v1, 4;
 
 	// load address from struct
 	addu $a0, $v0;
@@ -177,41 +158,18 @@ GetAddress_exit:
 	.type	GetAddressImmediate,@function;
 	.ent	GetAddressImmediate,0;
 GetAddressImmediate:
-	// if scene is loading, then we have no address
-	//li $v1, 1;
-	//lw $v0, SCENE_LOADED;
-	//bne $v0, $v1, GetAddressImmediate_exit;
-	//li $v0, 0;
-
-	// if in menus then return lobby address
-	lw $v0, GAME_MAP_ID;
-  li $v1, 39;
-	beq $v0, $v1, GetAddressImmediate_exit;
-	lw $v0, 0($a0)
-
-	// if not in game then no address
-	//lw $v0, GAME_ACTIVE;
-	//beq $v0, $zero, GetAddressImmediate_exit;
-	//nop;
-
-	// otherwise in game
-	// return address by map
-	lw $v0, GAME_MAP_ID;
+	// return address by level
+	lw $v0, Level;
 	
-	// map local map ids (50+) to real map ids (40+)
-	addiu $v1, $v0, -10;
-	slti $t0, $v0, 50;
-	movz $v0, $v1, $t0;
-
-	// return 0 if map is not between 40 and 50
-	addiu $v1, $v0, -40
-	sltiu $v0, $v1, 10
+	// return 0 if level is not between 0 and 18
+	sltiu $v1, $v0, 19
 	beqzl $v0, GetAddressImmediate_exit;
 	move $v0, $zero;
-
-	// load offset into VariableAddress struct by map id
-	sll $v1, $v1, 2; // multiply map id [0,9] by 4
-	addiu $v0, $v1, 4; // offset by 4 to skip lobby address
+	
+	// load offset into VariableAddress struct by level id
+	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	// offset by 4 to skip lobby address
+	// addiu $v0, $v1, 4;
 
 	// load address from struct
 	addu $a0, $v0;

@@ -16,26 +16,23 @@
 # Review ps2sdk README & LICENSE files for further details.
 */
 
-#ifndef _LIBGC_PAD_H
-#define _LIBGC_PAD_H
+#ifndef _LIBRAC1_PAD_H
+#define _LIBRAC1_PAD_H
 
 #include <tamtypes.h>
 #include "types.h"
 
-#ifdef RAC2_PAL
-#define P1_PAD                              ((PAD*)0x00138200)
-#define P2_PAD                              ((PAD*)0x00138580)
-#elif RAC2_NTSCJ
-#define P1_PAD                              ((PAD*)0x00138180)
-#define P2_PAD                              ((PAD*)0x00138500)
+#ifdef RAC1_PAL
+#define P1_PAD                              ((PAD*)0x0013c95c)
+#elif RAC1_NTSCJ
+#define P1_PAD                              ((PAD*)0x0013ca5c)
 #else
-#define P1_PAD                              ((PAD*)0x00138180)
-#define P2_PAD                              ((PAD*)0x00138500)
+#define P1_PAD                              ((PAD*)0x0013c95c)
 #endif
 
 #define REVERSE_U16(bytes) (bytes >> 8) | (bytes << 8) 
 
-#define PAD_PORT_MAX        2
+#define PAD_PORT_MAX        1
 
 #define PAD_LEFT            0x0080
 #define PAD_DOWN            0x0040
@@ -79,7 +76,7 @@ typedef struct PAD { // 0x5c0
 				unsigned char r1_p;
 				unsigned char l2_p;
 				unsigned char r2_p;
-			} buffer;
+			};
 	};
 	/* 0x100 */ float analog[16];
 	/* 0x140 */ float hudAnalog[16];
@@ -181,7 +178,7 @@ typedef struct PadHistory {
  * RETURN :
  * AUTHOR :			
  */
-__LIBGC_GETTER__ int padGetButton(int port, u16 buttonMask);
+__LIBRAC1_GETTER__ int padGetButton(int port, u16 buttonMask);
 
 /*
  * NAME :		padGetButtonDown
@@ -195,7 +192,7 @@ __LIBGC_GETTER__ int padGetButton(int port, u16 buttonMask);
  * RETURN :
  * AUTHOR :			
  */
-__LIBGC_GETTER__ int padGetButtonDown(int port, u16 buttonMask);
+__LIBRAC1_GETTER__ int padGetButtonDown(int port, u16 buttonMask);
 
 /*
  * NAME :		padGetButtonUp
@@ -209,7 +206,7 @@ __LIBGC_GETTER__ int padGetButtonDown(int port, u16 buttonMask);
  * RETURN :
  * AUTHOR :			
  */
-__LIBGC_GETTER__ int padGetButtonUp(int port, u16 buttonMask);
+__LIBRAC1_GETTER__ int padGetButtonUp(int port, u16 buttonMask);
 
 /*
  * NAME :		padResetInput
@@ -221,6 +218,6 @@ __LIBGC_GETTER__ int padGetButtonUp(int port, u16 buttonMask);
  * RETURN :
  * AUTHOR :			
  */
-__LIBGC_SETTER__ void padResetInput(int port);
+__LIBRAC1_SETTER__ void padResetInput(int port);
 
-#endif // _LIBGC_PAD_H
+#endif // _LIBRAC1_PAD_H

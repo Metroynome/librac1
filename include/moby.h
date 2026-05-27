@@ -1,12 +1,12 @@
-#ifndef _LIBGC_MOBY_H_
-#define _LIBGC_MOBY_H_
+#ifndef _LIBRAC1_MOBY_H_
+#define _LIBRAC1_MOBY_H_
 
 #include <tamtypes.h>
 #include "types.h"
 #include "math3d.h"
 
 enum MobyIds {
-    MOBY_ID_ASDF = 0,
+    MOBY_ID_NULL = 0,
 };
 
 typedef struct Moby { // 0x100
