@@ -12,11 +12,7 @@
 
 
 //--------------------------------------------------------
-__LIBRAC1_INLINE__ int sprintf(char * buffer, const char * format, ...);
-__LIBRAC1_INLINE__ int snprintf(char * buffer, long n, const char * format, ...);
 __LIBRAC1_INLINE__ int printf(const char * format, ...);
-
-__LIBRAC1_INLINE__ int sce_snprintf(char * buffer, long n, const char * format, ...);
 
 //--------------------------------------------------------
 #ifdef DEBUG

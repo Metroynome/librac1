@@ -6,7 +6,7 @@ EE_INCS += -I./include -I$(EE_SRC_DIR)
 EE_LIB = $(EE_LIB_DIR)$(EE_LIB_NAME)
 
 # Objects
-EE_OBJS = interop.o functions.o string.o math.o math3d.o pad.o rac1.o
+EE_OBJS = functions.o string.o math.o math3d.o pad.o rac1.o
 
 EE_OBJS := $(EE_OBJS:%=$(EE_OBJS_DIR)%)
 
@@ -25,10 +25,10 @@ $(EE_OBJS_DIR)%.o : $(EE_SRC_DIR)%.S
 	$(EE_C_COMPILE) -c $< -o $@
 
 install: all
-	mkdir -p $(DESTDIR)$(PS2SDK)/ports/include/libgc
+	mkdir -p $(DESTDIR)$(PS2SDK)/ports/include/librac1
 	mkdir -p $(DESTDIR)$(PS2SDK)/ports/lib
 	cp -f $(EE_LIB) $(DESTDIR)$(PS2SDK)/ports/lib
-	cp -f include/*.h $(DESTDIR)$(PS2SDK)/ports/include/libgc
+	cp -f include/*.h $(DESTDIR)$(PS2SDK)/ports/include/librac1
 
 clean:
 	rm -f -r $(EE_OBJS_DIR)

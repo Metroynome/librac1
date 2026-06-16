@@ -197,6 +197,6 @@ typedef struct Player { // 0x2540
 /* 0x2538 */ int forceGadgetSwitch;
 /* 0x253c */ int unk_253c;
 } Player;
-typedef Hero Player;
+typedef Player Hero;
 
 #endif
