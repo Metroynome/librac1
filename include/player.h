@@ -8,7 +8,7 @@
 #include "math.h"
 #include "moby.h"
 
-#define PLAYER_1_STRUCT		((Player*)0x00189e20)
+#define PLAYER_1_STRUCT		((Player*)0x00013f350)
 
 typedef enum PlayerState {
 	PLAYER_STATE_IDLE = 0,
@@ -165,37 +165,20 @@ typedef enum PlayerType {
 	PLAYER_TYPE_CNT = 38
 } PlayerType;
 
+typedef struct HeroMove {
+/* 0x000 */ VECTOR behavior;
+} HeroMove;
+
 /* start:
-Aranos: 0x00189e20
-Museum: 0x00189e20
+0013f350
 */
-typedef struct Player { // 0x2540
+typedef struct Player { // 0x2310
 /* 0x0000 */ MATRIX mtx;
 /* 0x0040 */ MATRIX invMtx;
 /* 0x0080 */ VECTOR pos;
 /* 0x0090 */ VECTOR rot;
-/* 0x00a0 */ char unk_00a0[0xb98];
-/* 0x0c18 */ Moby *pMoby;
-/* 0x0c1c */ char unk_0c1c[0x1674];
-/* 0x2290 */ Moby *unk_Moby_2290;
-/* 0x2294 */ int state;
-/* 0x2298 */ int prevState;
-/* 0x229c */ int prevprevState;
-/* 0x22a0 */ int state_4;
-/* 0x22a4 */ int state_5;
-/* 0x22a8 */ int state_6;
-/* 0x22ac */ int state_7;
-/* 0x22b0 */ int state_8;
-/* 0x22b4 */ char unk_22b4[0xd];
-/* 0x22c1 */ bool resetLevel;
-/* 0x22c2 */ char unk_22c2[0x20a];
-/* 0x24cc */ int hitpoints;
-/* 0x24d0 */ char unk_24d0[0x18];
-/* 0x24f8 */ u16 timer_24f8;
-/* 0x24fa */ u16 timer_24fa;
-/* 0x24fc */ char unk_24fc[0x3c];
-/* 0x2538 */ int forceGadgetSwitch;
-/* 0x253c */ int unk_253c;
+/* 0x00a0 */ char unk_00a0[0x40];
+/* 0x00e0 */ HeroMove move;
 } Player;
 typedef Player Hero;
 
