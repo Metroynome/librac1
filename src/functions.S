@@ -187,16 +187,15 @@ GetAddressImmediate_exit:
 #--------------------------------------------------------
 #------------------- STANDARD LIBRARY -------------------
 #--------------------------------------------------------
+#ifdef RAC1_NTSCJ
+#FUNCTION(memcmp, 0x001151b4)
+#FUNCTION(memset, 0x001153fc)
+#FUNCTION(memcpy, 0x001153d4)
+#FUNCTION(strncpy, 0x00116808)
+#else
 FUNCTION(printf, 0x0011c1f8)
-FUNCTION(sprintf, 0x00118cc8)
-FUNCTION(memset, 0x00115484)
+FUNCTION(memcmp, 0x001151b4)
+FUNCTION(memset, 0x001153fc)
 FUNCTION(memcpy, 0x001153d4)
-FUNCTION(strncpy, 0x00115ac0)
-FUNCTION(strcmp, 0x00008f998)
-FUNCTION(strncmp, 0x001158f8)
-#FUNCTION(strlen, 0x0008fadc)
-
-#--------------------------------------------------------
-#------------------------ RANDOM ------------------------
-#--------------------------------------------------------
-FUNCTION(randSeed, 0x0019d650)
+FUNCTION(strncpy, 0x00116808)
+#endif
