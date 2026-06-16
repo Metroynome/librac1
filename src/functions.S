@@ -68,7 +68,7 @@ name:														\
 __LocalGetAddress:
 	// if GAME_MODE_NORMAL (walking, no puzzle, not paused)
 	lw $v0, gameMode;
-	bne $v0, zero, __LocalGetAddress_exit;
+	bne $v0, $zero, __LocalGetAddress_exit;
 	li $v0, 0;
 
 	// if in menus then return lobby address
@@ -114,7 +114,7 @@ __LocalGetAddress_exit:
 GetAddress:
 	// if GAME_MODE_NORMAL (walking, no puzzle, not paused)
 	lw $v0, gameMode;
-	bne $v0, zero, GetAddress_exit;
+	bne $v0, $zero, GetAddress_exit;
 	li $v0, 0;
 
 	// if in menus then return lobby address

@@ -1,5 +1,5 @@
 EE_LIB_NAME = librac1ntscj.a
-EE_DEFS = -DRAC1_NTSCJ
+EE_DEFS = -DRAC1_NTSCJ -DRAC_NTSCJ -DNTSCJ
 
 include ${CURDIR}/Makefile.defs
 include $(PS2SDK)/samples/Makefile.pref

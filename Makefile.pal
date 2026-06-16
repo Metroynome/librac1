@@ -1,5 +1,5 @@
 EE_LIB_NAME = librac1pal.a
-EE_DEFS = -DRAC1_PAL
+EE_DEFS = -DRAC1_PAL -DRAC_PAL -DPAL
 
 include ${CURDIR}/Makefile.defs
 include $(PS2SDK)/samples/Makefile.pref
