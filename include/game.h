@@ -7,6 +7,7 @@
 
 #ifdef RAC1_NTSCJ
 #define Level (*(volatile int*)0x0015ee84)
+#define worldupdateTime (*(volatile int*)0x0015f4f8)
 #define gameMode (*(volatile int*)0x0015f6c4)
 #define gameMode_startMenu (*(volatile innt*)0x0015f704)
 #define __gp (0x00166d00)
@@ -15,6 +16,7 @@
 // Addresses are different if on start menu versus in game.
 // LEvel stays the same.
 #define Level (*(volatile int*)0x0015ed84)
+#define worldupdateTime (*(volatile int*)0x0015f3f8)
 #define gameMode (*(volatile int*)0x0015f5c4)
 #define gameMode_startMenu (*(volatile innt*)0x0015f604)
 #define __gp (0x00166c00)
