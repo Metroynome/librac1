@@ -1,5 +1,5 @@
 #ifdef RAC1_NTSCJ
-#define gameMode (0x0015f6a8)
+#define gameMode (0x0015f6c4)
 #define Level (0x0015ee84)
 #else
 // NTSCU and PAL are the same
@@ -83,7 +83,7 @@ __LocalGetAddress:
 	
 	// return 0 if level is not between 0 and 18
 	sltiu $v1, $v0, 19
-	beqzl $v0, __LocalGetAddress_exit;
+	beqzl $v1, __LocalGetAddress_exit;
 	move $v0, $zero;
 	
 	// load offset into VariableAddress struct by level id
@@ -129,7 +129,7 @@ GetAddress:
 	
 	// return 0 if level is not between 0 and 18
 	sltiu $v1, $v0, 19
-	beqzl $v0, GetAddress_exit;
+	beqzl $v1, GetAddress_exit;
 	move $v0, $zero;
 	
 	// load offset into VariableAddress struct by level id

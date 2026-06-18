@@ -6,12 +6,18 @@
 #include "types.h"
 
 #ifdef RAC1_NTSCJ
-#define gameMode (*(volatile int*)0x0015f6a8)
 #define Level (*(volatile int*)0x0015ee84)
+#define gameMode (*(volatile int*)0x0015f6c4)
+#define gameMode_startMenu (*(volatile innt*)0x0015f704)
+#define __gp (0x00166d00)
 #else
 // NTSCU and PAL are the same
-#define gameMode (*(volatile int*)0x0015f5c4)
+// Addresses are different if on start menu versus in game.
+// LEvel stays the same.
 #define Level (*(volatile int*)0x0015ed84)
+#define gameMode (*(volatile int*)0x0015f5c4)
+#define gameMode_startMenu (*(volatile innt*)0x0015f604)
+#define __gp (0x00166c00)
 #endif
 
 typedef enum {
