@@ -179,6 +179,17 @@ typedef struct Player { // 0x2310
 /* 0x0090 */ VECTOR rot;
 /* 0x00a0 */ char unk_00a0[0x40];
 /* 0x00e0 */ HeroMove move;
+/* 0x00f0 */ char unk_00f0[0x9d0];
+/* 0x0ac0 */ MATRIX mtx_unk_0ac0[9];
+/* 0x0d00 */ char unk_0d00[0x1380];
+/* 0x2080 */ Moby *pMoby;
+/* 0x2084 */ int state;
+/* 0x2088 */ char unk_2088[0x1c0];
+/* 0x2248 */ Moby *unk_2248;
+/* 0x224c */ char unk_224c[0x88];
+/* 0x22d4 */ short timer_22d4;
+/* 0x22d6 */ short timer_22d6;
+/* 0x22d8 */ char unk_22d8[0x38];
 } Player;
 typedef Player Hero;
 

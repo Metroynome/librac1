@@ -19,7 +19,10 @@ typedef struct Moby { // 0x100
 /* 0x24 */ struct MobyClass *pClass;
 /* 0x28 */ struct Moby *pChain;
 /* 0x2c */ float scale;
-/* 0x30 */ char unk_30[0x90];
+/* 0x30 */ char unk_30[0x44];
+/* 0x74 */ void *pUpdate;
+/* 0x78 */ void *pVar;
+/* 0x7c */ char unk_7c[0x44];
 /* 0xc0 */ mtx3 rotMtx;
 /* 0xf0 */ vec4 rot;
 } Moby;
