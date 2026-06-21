@@ -8,7 +8,13 @@
 #include "math.h"
 #include "moby.h"
 
-#define PLAYER_1_STRUCT		((Player*)0x00013f350)
+#ifdef RAC1_NTSCJ
+#define PLAYER_1_STRUCT ((Player*)0x00013f450)
+#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ee60)
+#else
+#define PLAYER_1_STRUCT ((Player*)0x00013f350)
+#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ed60)
+#endif
 
 typedef enum PlayerState {
 	PLAYER_STATE_IDLE = 0,
@@ -165,6 +171,17 @@ typedef enum PlayerType {
 	PLAYER_TYPE_CNT = 38
 } PlayerType;
 
+typedef struct TwakerTable {
+/* 0x00 */ float clankExhaustParticleSize;
+/* 0x04 */ float unk_04;
+/* 0x08 */ float transAnimSpeed;
+/* 0x0c */ float momentumMultiplyer;
+/* 0x10 */ float jumpSpeed;
+/* 0x14 */ float wrenchThrowSpeed;
+/* 0x18 */ int unk_18;
+/* 0x1c */ float unk_00;
+} TwakerTable_t;
+
 typedef struct HeroMove {
 /* 0x000 */ VECTOR behavior;
 } HeroMove;
@@ -180,11 +197,35 @@ typedef struct Player { // 0x2310
 /* 0x00a0 */ char unk_00a0[0x40];
 /* 0x00e0 */ HeroMove move;
 /* 0x00f0 */ char unk_00f0[0x9d0];
+/* 0x022c */
 /* 0x0ac0 */ MATRIX mtx_unk_0ac0[9];
-/* 0x0d00 */ char unk_0d00[0x1380];
+/* 0x0d00 */ char unk_0d00[0x1020];
+/* 0x1d20 */ VECTOR sitckInput;
+/* 0x1d38 */ char unk_1d28[0x350];
 /* 0x2080 */ Moby *pMoby;
 /* 0x2084 */ int state;
-/* 0x2088 */ char unk_2088[0x1c0];
+/* 0x2088 */ char unk_2088[0x18];
+/* 0x20a0 */ char unk_20a0;
+/* 0x20a1 */ char unk_20a1;
+/* 0x20a2 */ char unk_20a2;
+/* 0x20a3 */ char unk_20a3;
+/* 0x20a4 */ char unk_20a4;
+/* 0x20a5 */ char invisible;
+/* 0x20a6 */ char wrenchOnly;
+/* 0x20a7 */ char forceWrench;
+/* 0x20a8 */ char firing;
+/* 0x20a9 */ char unk_20a9;
+/* 0x20aa */ char unk_20aa;
+/* 0x20ab */ char unk_20ab;
+/* 0x20ac */ char unk_20ac;
+/* 0x20ad */ char unk_20ad;
+/* 0x20ae */ char unk_20ae;
+/* 0x20af */ char hideWeapon;
+/* 0x20b0 */ char unk_20b0;
+/* 0x20b1 */ char unk_20b1;
+/* 0x20b2 */ char unk_20b2;
+/* 0x20b3 */ char forceCamTurnOff;
+/* 0x20b4 */ char unk_20b4[0x194];
 /* 0x2248 */ Moby *unk_2248;
 /* 0x224c */ char unk_224c[0x88];
 /* 0x22d4 */ short timer_22d4;
