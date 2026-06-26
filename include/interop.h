@@ -27,7 +27,7 @@ typedef struct VariableAddress {
 	u32 Eudora; // Level: 4
 	u32 Rilgar; // Level: 5
 	u32 NebulaG34; // Level: 6
-	u32 Unbris; // Level: 7
+	u32 Umbris; // Level: 7
 	u32 Batalia; // Level: 8
 	u32 Gaspar; // Level: 9
 	u32 Orxon; // Level: 10

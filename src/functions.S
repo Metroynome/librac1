@@ -200,3 +200,9 @@ FUNCTION(memset, 0x001153fc)
 FUNCTION(memcpy, 0x001153d4)
 FUNCTION(strncpy, 0x00116808)
 #endif
+
+#--------------------------------------------------------
+#------------------- MATH ----------- -------------------
+#--------------------------------------------------------
+VARIABLE_FUNCTION(acosf, vaFastAngleCosF)
+VARIABLE_FUNCTION(asinf, vaFastAngleSinF)
