@@ -87,7 +87,7 @@ __LocalGetAddress:
 	move $v0, $zero;
 	
 	// load offset into VariableAddress struct by level id
-	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	sll $v0, $v0, 2; // multiply level id [0,9] by 4
 	// offset by 4 to skip lobby address
 	// addiu $v0, $v1, 4;
 
@@ -133,7 +133,7 @@ GetAddress:
 	move $v0, $zero;
 	
 	// load offset into VariableAddress struct by level id
-	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	sll $v0, $v0, 2; // multiply level id [0,9] by 4
 	// offset by 4 to skip lobby address
 	// addiu $v0, $v1, 4;
 
@@ -163,11 +163,11 @@ GetAddressImmediate:
 	
 	// return 0 if level is not between 0 and 18
 	sltiu $v1, $v0, 19
-	beqzl $v0, GetAddressImmediate_exit;
+	beqzl $v1, GetAddressImmediate_exit;
 	move $v0, $zero;
 	
 	// load offset into VariableAddress struct by level id
-	sll $v0, $v1, 2; // multiply level id [0,9] by 4
+	sll $v0, $v0, 2; // multiply level id [0,9] by 4
 	// offset by 4 to skip lobby address
 	// addiu $v0, $v1, 4;
 
