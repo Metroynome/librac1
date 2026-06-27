@@ -197,9 +197,16 @@ typedef struct Player { // 0x2310
 /* 0x00a0 */ char unk_00a0[0x40];
 /* 0x00e0 */ HeroMove move;
 /* 0x00f0 */ char unk_00f0[0x9d0];
-/* 0x022c */
 /* 0x0ac0 */ MATRIX mtx_unk_0ac0[9];
-/* 0x0d00 */ char unk_0d00[0x1020];
+/* 0x0d00 */ char unk_0d00[0x390];
+/* 0x1090 */ Moby *pWeaponMoby;
+/* 0x1094 */ char unk_1094[0x10];
+/* 0x10a4 */ int weaponOClass;
+/* 0x10a8 */ char unk_10a8[0x8];
+/* 0x10b0 */ int weaponHeldTime;
+/* 0x10b4 */ int unk_10b4;
+/* 0x10b8 */ int weaponHeldId;
+/* 0x10bc */ char unk_10bc[0xc64];
 /* 0x1d20 */ VECTOR sitckInput;
 /* 0x1d38 */ char unk_1d28[0x350];
 /* 0x2080 */ Moby *pMoby;
