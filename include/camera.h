@@ -8,6 +8,8 @@
 
 #define CameraFlag (*(u32*)cameraGetFlag())
 
+#define CAMERA_SPEEDS ((float*)0x00162228)
+
 typedef enum {
     CAM_FLAG_NULL = 0,
     CAM_FLAG_NO_WALK = 8,
