@@ -214,3 +214,13 @@ VARIABLE_FUNCTION(atan2f, vaATAN2F)
 # Rewritten matrix_to_euler exists
 #VARIABLE_FUNCTION(matrix_to_euler, vaMatirx_To_Euler)
 VARIABLE_FUNCTION(euler_to_matrix, vaEuler_To_Matrix)
+
+#--------------------------------------------------------
+#------------------- CAMERA --------- -------------------
+#--------------------------------------------------------
+VARIABLE_FUNCTION(cameraSetFollowDistance, vaCam_SetFollowDistance)
+VARIABLE_FUNCTION(cameraSetFollowAngleOrOffset, vaCam_SetFollowAngleOrOffset)
+VARIABLE_FUNCTION(cameraSetElevation, vaCam_SetElevation)
+VARIABLE_FUNCTION(cameraSetFollowMode, vaCam_SetFollowMode)
+VARIABLE_FUNCTION(cameraSetFollowSmoothing, vaCam_SetFollowSmoothing)
+VARIABLE_FUNCTION(cameraEnableBlendMode, vaCam_EnableBlendMode)
