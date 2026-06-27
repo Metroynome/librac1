@@ -2,17 +2,137 @@
 #include "math.h"
 #include "math3d.h"
 #include "stdio.h"
+#include "types.h"
+#include "interop.h"
 #include <tamtypes.h>
   
-/*
-# _____     ___ ____     ___ ____
-#  ____|   |    ____|   |        | |____|
-# |     ___|   |____ ___|    ____| |    \    PS2DEV Open Source Project.
-#-----------------------------------------------------------------------
-# (c) 2005 Naomi Peori <naomi@peori.ca>
-# Licenced under Academic Free License version 2.0
-# Review ps2sdk README & LICENSE files for further details.
-*/
+VariableAddress_t vaEuler_To_Matrix = {
+#ifdef RAC1_PAL
+	.Veldin1 = 0x001ff69c,
+	.Novalis = 0x0022152c,
+	.Aridia = 0x00210684,
+	.Kerwan = 0x001f8fb4,
+	.Eudora = 0x001f2084,
+	.Rilgar = 0x0022e384,
+	.NebulaG34 = 0x002176bc,
+	.Umbris = 0x00227484,
+	.Batalia = 0x0021219c,
+	.Gaspar = 0x0021f2fc,
+	.Orxon = 0x001f2c84,
+	.Pokitaru = 0x00230f84,
+	.Hoven = 0x0022252c,
+	.OltanisOrbit = 0x0020b104,
+	.Oltanis = 0x00212cac,
+	.Quartu = 0x001f8d94,
+	.Kalebo = 0x001fde84,
+	.VeldinOrbit = 0x001fc6c4,
+	.Veldin2 = 0x00208404,
+#elif RAC1_NTSCJ
+	.Veldin1 = 0x002009ec,
+	.Novalis = 0x0022287c,
+	.Aridia = 0x002119d4,
+	.Kerwan = 0x001fa304,
+	.Eudora = 0x001f3454,
+	.Rilgar = 0x0022f6d4,
+	.NebulaG34 = 0x00218a0c,
+	.Umbris = 0x002287d4,
+	.Batalia = 0x002134ec,
+	.Gaspar = 0x0022064c,
+	.Orxon = 0x001f3fd4,
+	.Pokitaru = 0x002322d4,
+	.Hoven = 0x002238fc,
+	.OltanisOrbit = 0x0020c454,
+	.Oltanis = 0x00213ffc,
+	.Quartu = 0x001fa0e4,
+	.Kalebo = 0x001ff254,
+	.VeldinOrbit = 0x001fdb14,
+	.Veldin2 = 0x00209754,
+#else
+	.Veldin1 = 0x001ffaec,
+	.Novalis = 0x002219fc,
+	.Aridia = 0x00210b54,
+	.Kerwan = 0x001f9484,
+	.Eudora = 0x001f2554,
+	.Rilgar = 0x0022e7d4,
+	.NebulaG34 = 0x00217b8c,
+	.Umbris = 0x00227954,
+	.Batalia = 0x0021266c,
+	.Gaspar = 0x0021f7cc,
+	.Orxon = 0x001f3154,
+	.Pokitaru = 0x00231454,
+	.Hoven = 0x002229fc,
+	.OltanisOrbit = 0x0020b5d4,
+	.Oltanis = 0x002130fc,
+	.Quartu = 0x001f9264,
+	.Kalebo = 0x001fe354,
+	.VeldinOrbit = 0x001fcb94,
+	.Veldin2 = 0x002088d4,
+#endif
+};
+
+VariableAddress_t vaMatrix_To_Euler = {
+#ifdef RAC1_PAL
+	.Veldin1 = 0x0025cf9c,
+	.Novalis = 0x00271de4,
+	.Aridia = 0x0025f54c,
+	.Kerwan = 0x0024b96c,
+	.Eudora = 0x0024ff4c,
+	.Rilgar = 0x002871fc,
+	.NebulaG34 = 0x0026bd2c,
+	.Umbris = 0x0028593c,
+	.Batalia = 0x00267414,
+	.Gaspar = 0x0027c9d4,
+	.Orxon = 0x0024fa2c,
+	.Pokitaru = 0x00282dc4,
+	.Hoven = 0x00275e14,
+	.OltanisOrbit = 0x00268f64,
+	.Oltanis = 0x00265324,
+	.Quartu = 0x0024c7cc,
+	.Kalebo = 0x002587fc,
+	.VeldinOrbit = 0x002577cc,
+	.Veldin2 = 0x0025f264,
+#elif RAC1_NTSCJ
+	.Veldin1 = 0x0025f344,
+	.Novalis = 0x00274174,
+	.Aridia = 0x00261904,
+	.Kerwan = 0x0024dcf4,
+	.Eudora = 0x00252374,
+	.Rilgar = 0x002895ac,
+	.NebulaG34 = 0x0026e0a4,
+	.Umbris = 0x00287ce4,
+	.Batalia = 0x002697a4,
+	.Gaspar = 0x0027ed7c,
+	.Orxon = 0x00251db4,
+	.Pokitaru = 0x0028514c,
+	.Hoven = 0x0027822c,
+	.OltanisOrbit = 0x0026b2ec,
+	.Oltanis = 0x002676bc,
+	.Quartu = 0x0024eb7c,
+	.Kalebo = 0x0025ac1c,
+	.VeldinOrbit = 0x00259c6c,
+	.Veldin2 = 0x00261614,
+#else
+	.Veldin1 = 0x0025d38c,
+	.Novalis = 0x0027224c,
+	.Aridia = 0x0025f9b4,
+	.Kerwan = 0x0024bdd4,
+	.Eudora = 0x002503bc,
+	.Rilgar = 0x00287604,
+	.NebulaG34 = 0x0026c19c,
+	.Umbris = 0x00285dac,
+	.Batalia = 0x0026787c,
+	.Gaspar = 0x0027ce44,
+	.Orxon = 0x0024fe9c,
+	.Pokitaru = 0x0028322c,
+	.Hoven = 0x0027627c,
+	.OltanisOrbit = 0x002693d4,
+	.Oltanis = 0x0026570c,
+	.Quartu = 0x0024cc34,
+	.Kalebo = 0x00258c84,
+	.VeldinOrbit = 0x00257c3c,
+	.Veldin2 = 0x0025f6cc,
+#endif
+};
 
 //--------------------------------------------------------
 void vector_write(VECTOR output, u128 input0)
@@ -418,7 +538,7 @@ void vector_rodrigues(VECTOR output, VECTOR input, VECTOR axis, float angle)
 
 
 //--------------------------------------------------------
-void matrix_toeuler(VECTOR output, MATRIX input0)
+void matrix_to_euler(VECTOR output, MATRIX input0)
 {
     float m11 = input0[0],m12 = input0[1],m13 = input0[2];
     float m21 = input0[4],m22 = input0[5],m23 = input0[6];

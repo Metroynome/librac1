@@ -36,7 +36,7 @@ __LIBRAC1_INLINE__ float lerpfAngle(float a, float b, float t);
 __LIBRAC1_INLINE__ float clamp(float v, float min, float max);
 __LIBRAC1_INLINE__ float clampAngle(float theta);
 __LIBRAC1_INLINE__ double fmod(double x, double y);
-__LIBRAC1_INLINE__ float atan2f(float y, float x);
+float atan2f(float y, float x);
 __LIBRAC1_INLINE__ float fastSubRots(float input0, float input1);
 __LIBRAC1_INLINE__ float fastDiffRots(float input0, float input1);
 

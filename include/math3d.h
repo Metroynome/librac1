@@ -88,7 +88,11 @@ void vector_sphere(VECTOR output, float radius, float angle, float elevation);
 void vector_setLength(VECTOR output, VECTOR input, float scale);
 void vector_rodrigues(VECTOR output, VECTOR input, VECTOR axis, float angle);
 
-void matrix_toeuler(VECTOR output, MATRIX input0);
+// commented matrix_to_euler matches arguments of games function.
+// but matrix_to_euler was rewritten. (see math3d.c)
+// void matrix_to_euler(MATRIX matrix_in, VECTOR vector_out);
+void matrix_to_euler(VECTOR output, MATRIX input0);
+void euler_to_matrix(MATRIX matrix_out, VECTOR vector_in);
 void matrix_fromrows(MATRIX output, VECTOR input0, VECTOR input1, VECTOR input2, VECTOR input3);
 void matrix_copy(MATRIX output, MATRIX input0);
 void matrix_inverse(MATRIX output, MATRIX input0);

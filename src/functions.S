@@ -206,3 +206,11 @@ FUNCTION(strncpy, 0x00116808)
 #--------------------------------------------------------
 VARIABLE_FUNCTION(acosf, vaFastAngleCosF)
 VARIABLE_FUNCTION(asinf, vaFastAngleSinF)
+VARIABLE_FUNCTION(atan2f, vaATAN2F)
+
+#--------------------------------------------------------
+#------------------- MATH3D --------- -------------------
+#--------------------------------------------------------
+# Rewritten matrix_to_euler exists
+#VARIABLE_FUNCTION(matrix_to_euler, vaMatirx_To_Euler)
+VARIABLE_FUNCTION(euler_to_matrix, vaEuler_To_Matrix)
