@@ -20,8 +20,8 @@
 #define MATH_DEG2RAD                    (MATH_PI / (float)180)
 
 //--------------------------------------------------------
-// __LIBRAC1_INLINE__ float cosf(float theta);
-// __LIBRAC1_INLINE__ float sinf(float theta);
+float cosf(float theta);
+float sinf(float theta);
 float acosf(float v);
 float asinf(float v);
 __LIBRAC1_INLINE__ float sqrtf(float f);

@@ -129,6 +129,24 @@ VariableAddress_t vaFastAngleSinF = {
 #endif
 };
 
+
+//--------------------------------------------------------
+float sinf(float x)
+{
+    // normalize to [-PI, PI]
+    while (x >  MATH_PI) x -= MATH_TAU;
+    while (x < -MATH_PI) x += MATH_TAU;
+
+    float x2 = x * x;
+    return x - (x  * x2) / 6.0f + (x  * x2 * x2) / 120.0f - (x  * x2 * x2 * x2) / 5040.0f + (x  * x2 * x2 * x2 * x2) / 362880.0f;
+}
+
+//--------------------------------------------------------
+float cosf(float x)
+{
+    return sinf(x + MATH_PI / 2.0f);
+}
+
 //--------------------------------------------------------
 // float acosf(float v)
 // {
