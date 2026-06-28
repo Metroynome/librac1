@@ -340,7 +340,9 @@ typedef struct Player { // 0x2310
 /* 0x20b3 */ char forceCamTurnOff;
 /* 0x20b4 */ char unk_20b4[0x194];
 /* 0x2248 */ Moby *unk_2248;
-/* 0x224c */ char unk_224c[0x88];
+/* 0x224c */ char unk_224c[0x50];
+/* 0x229c */ float inputMagnitude;
+/* 0x22a0 */ char unk_22a0[0x34];
 /* 0x22d4 */ short timer_22d4;
 /* 0x22d6 */ short timer_22d6;
 /* 0x22d8 */ char unk_22d8[0x38];
