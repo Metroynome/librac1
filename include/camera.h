@@ -7,8 +7,7 @@
 #include "math3d.h"
 
 #define CameraFlag (*(u32*)cameraGetFlag())
-
-#define CAMERA_SPEEDS ((float*)0x00162228)
+#define CAMERA_SPEEDS ((float*)cameraGetSpeeds())
 
 typedef enum {
     CAM_FLAG_NULL = 0,
@@ -286,6 +285,8 @@ u32 cameraGetStart(void);
 u32 cameraGetRot(void);
 // returns the camera flag address.
 u32 cameraGetFlag(void);
+// returns the camera speed table address.
+u32 cameraGetSpeeds(void);
 // Sets pending follow distance. When setCurrentDistance is nonzero, also writes the current distance field.
 void cameraSetFollowDistance(float distance, float rate, int setCurrentDistance);
 // Sets a pending follow angle/offset value used by camera follow positioning.

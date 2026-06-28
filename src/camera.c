@@ -7,6 +7,7 @@
 #define CAMERA_START ((u32)GetAddress(&vaCamera_Start))
 #define CAMERA_ROT  ((u32)GetAddress(&vaCamera_Start) + 0x150)
 #define CAMERA_FLAG ((u32)GetAddress(&vaCamera_Start) + 0x53e3)
+#define CAMERA_SPEED_TABLE ((u32)GetAddress(&vaCamera_Speeds))
 
 VariableAddress_t vaCamera_Start = {
 #ifdef RAC1_PAL
@@ -69,6 +70,70 @@ VariableAddress_t vaCamera_Start = {
     .Kalebo = 0x00167080,
     .VeldinOrbit = 0x00167580,
     .Veldin2 = 0x00167680,
+#endif
+};
+
+VariableAddress_t vaCamera_Speeds = {
+#ifdef RAC1_PAL
+    .Veldin1 = 0x00161d70,
+    .Novalis = 0x001621a8,
+    .Aridia = 0x001622e0,
+    .Kerwan = 0x00161da8,
+    .Eudora = 0x00161ea0,
+    .Rilgar = 0x00162138,
+    .NebulaG34 = 0x001624c0,
+    .Umbris = 0x00161d78,
+    .Batalia = 0x00162538,
+    .Gaspar = 0x00161e90,
+    .Orxon = 0x00162160,
+    .Pokitaru = 0x001626c8,
+    .Hoven = 0x001621a0,
+    .OltanisOrbit = 0x00162018,
+    .Oltanis = 0x00162410,
+    .Quartu = 0x00162320,
+    .Kalebo = 0x00162128,
+    .VeldinOrbit = 0x001625d0,
+    .Veldin2 = 0x001626e8,
+#elif RAC1_NTSCJ
+    .Veldin1 = 0x00161e70,
+    .Novalis = 0x001622a8,
+    .Aridia = 0x001623e0,
+    .Kerwan = 0x00161ea8,
+    .Eudora = 0x00161fa0,
+    .Rilgar = 0x00162238,
+    .NebulaG34 = 0x001625c0,
+    .Umbris = 0x00161e78,
+    .Batalia = 0x00162638,
+    .Gaspar = 0x00161f90,
+    .Orxon = 0x00162260,
+    .Pokitaru = 0x001627c8,
+    .Hoven = 0x001622a0,
+    .OltanisOrbit = 0x00162118,
+    .Oltanis = 0x00162510,
+    .Quartu = 0x00162420,
+    .Kalebo = 0x00162228,
+    .VeldinOrbit = 0x001626d0,
+    .Veldin2 = 0x001627e8,
+#else
+    .Veldin1 = 0x00161db0,
+    .Novalis = 0x00162228,
+    .Aridia = 0x00162360,
+    .Kerwan = 0x00161e28,
+    .Eudora = 0x00161f20,
+    .Rilgar = 0x00162178,
+    .NebulaG34 = 0x00162540,
+    .Umbris = 0x00161df8,
+    .Batalia = 0x001625b8,
+    .Gaspar = 0x00161f10,
+    .Orxon = 0x001621e0,
+    .Pokitaru = 0x00162748,
+    .Hoven = 0x00162220,
+    .OltanisOrbit = 0x00162098,
+    .Oltanis = 0x00162450,
+    .Quartu = 0x001623a0,
+    .Kalebo = 0x00162168,
+    .VeldinOrbit = 0x00162650,
+    .Veldin2 = 0x00162768,
 #endif
 };
 
@@ -470,4 +535,9 @@ u32 cameraGetRot(void)
 u32 cameraGetFlag(void)
 {
     return CAMERA_FLAG;
+}
+
+u32 cameraGetSpeeds(void)
+{
+    return CAMERA_SPEED_TABLE;
 }
