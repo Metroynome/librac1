@@ -183,8 +183,107 @@ typedef struct TwakerTable {
 } TwakerTable_t;
 
 typedef struct HeroMove {
-/* 0x000 */ VECTOR behavior;
+/* 0x00 */ VECTOR behavior;
+/* 0x10 */ VECTOR external;
+/* 0x20 */ VECTOR actual;
+/* 0x30 */ VECTOR actualFromBehavior;
+/* 0x40 */ VECTOR actualFromBehaviorGrav;
+/* 0x50 */ VECTOR actualFromBehavior2D;
+/* 0x60 */ VECTOR actualFromExternal;
+/* 0x70 */ VECTOR taper;
+/* 0x80 */ float speed;
+/* 0x84 */ float speed2D;
+/* 0x88 */ float forwardSpeed;
+/* 0x8c */ float ascent;
+/* 0x90 */ float zSpeed;
+/* 0x94 */ float externalSpeed;
+/* 0x98 */ int pad[2];
 } HeroMove;
+
+typedef struct HeroTurn {
+/* 0x00 */ float ideal;
+/* 0x04 */ float speed;
+/* 0x08 */ float accel;
+/* 0x0c */ float diff;
+} HeroTurn;
+
+typedef struct HeroMotionControl {
+/* 0x00 */ float targetSpeed;
+/* 0x04 */ float currentSpeed;
+/* 0x08 */ int stateFrame;
+/* 0x0c */ int unk_0c;
+/* 0x10 */ int transTimerA;
+/* 0x14 */ int transTimerB;
+/* 0x18 */ int unk_18;
+/* 0x1c */ int unk_1c;
+/* 0x20 */ int unk_20;
+/* 0x24 */ int unk_24;
+/* 0x28 */ int unk_28;
+/* 0x2c */ int unk_2c;
+/* 0x30 */ int unk_30;
+/* 0x34 */ int unk_34;
+} HeroMotionControl;
+
+typedef struct HeroColl {
+/* 0x00 */ VECTOR normal;
+/* 0x10 */ VECTOR ip;
+/* 0x20 */ float top;
+/* 0x24 */ float bot;
+/* 0x28 */ float idealTop;
+/* 0x2c */ float idealBot;
+/* 0x30 */ float idealRadius;
+/* 0x34 */ float radius;
+/* 0x38 */ float radiusSpeed;
+/* 0x3c */ Moby *pContactMoby;
+/* 0x40 */ Moby *pBumpMoby;
+/* 0x44 */ float bumpPushSpeed;
+/* 0x48 */ float distToWall;
+/* 0x4c */ float wallAng;
+/* 0x50 */ float wallSlope;
+/* 0x54 */ char wallIsCrate;
+/* 0x55 */ char wallIsMoby;
+/* 0x56 */ char contact;
+/* 0x57 */ char cpad;
+/* 0x58 */ float ledgeHeight;
+/* 0x5c */ float ledgeDist;
+/* 0x60 */ int atLedge;
+/* 0x64 */ Moby *pWallJumpMoby;
+/* 0x68 */ int pad[2];
+/* 0x70 */ float radiusSqd;
+/* 0x74 */ char unk_74[0x0c];
+} HeroColl;
+
+typedef struct HeroGround {
+/* 0x00 */ VECTOR normal;
+/* 0x10 */ VECTOR waterNormal;
+/* 0x20 */ VECTOR gravity;
+/* 0x30 */ VECTOR point;
+/* 0x40 */ VECTOR lastGoodPos;
+/* 0x50 */ VECTOR externalBootGrav;
+/* 0x60 */ float feetHeights[2];
+/* 0x68 */ float pitchSlopes[2];
+/* 0x70 */ float rollSlopes[2];
+/* 0x78 */ float height;
+/* 0x7c */ float dist;
+/* 0x80 */ float slope;
+/* 0x84 */ float pitchSlope;
+/* 0x88 */ float rollSlope;
+/* 0x8c */ float angz;
+/* 0x90 */ float waterHeight;
+/* 0x94 */ float quicksandHeight;
+/* 0x98 */ int underWater;
+/* 0x9c */ Moby *pMoby;
+/* 0xa0 */ int onGood;
+/* 0xa4 */ float speed;
+/* 0xa8 */ short magnetic;
+/* 0xaa */ short stickLanding;
+/* 0xac */ short offAny;
+/* 0xae */ short offGood;
+/* 0xb0 */ int oscillating;
+/* 0xb4 */ float oscPos1;
+/* 0xb8 */ float oscPos2;
+/* 0xbc */ int pad[1];
+} HeroGround;
 
 /* start:
 0013f350
@@ -196,7 +295,9 @@ typedef struct Player { // 0x2310
 /* 0x0090 */ VECTOR rot;
 /* 0x00a0 */ char unk_00a0[0x40];
 /* 0x00e0 */ HeroMove move;
-/* 0x00f0 */ char unk_00f0[0x9d0];
+/* 0x0180 */ HeroTurn turn;
+/* 0x0190 */ HeroMotionControl motion;
+/* 0x01c8 */ char unk_01c8[0x8f8];
 /* 0x0ac0 */ MATRIX Gadgets[9];
 /* 0x0d00 */ char unk_0d00[0x390];
 /* 0x1090 */ Moby *pWeaponMoby;
@@ -208,10 +309,15 @@ typedef struct Player { // 0x2310
 /* 0x10b8 */ int weaponHeldId;
 /* 0x10bc */ char unk_10bc[0xc64];
 /* 0x1d20 */ VECTOR sitckInput;
-/* 0x1d38 */ char unk_1d28[0x350];
+/* 0x1d30 */ char unk_1d30[0x350];
 /* 0x2080 */ Moby *pMoby;
 /* 0x2084 */ int state;
-/* 0x2088 */ char unk_2088[0x18];
+/* 0x2088 */ int subState;
+/* 0x208c */ int stateType;
+/* 0x2090 */ int previousState;
+/* 0x2094 */ int previousType;
+/* 0x2098 */ int stateTimer;
+/* 0x209c */ int previousStateTimer;
 /* 0x20a0 */ char unk_20a0;
 /* 0x20a1 */ char unk_20a1;
 /* 0x20a2 */ char unk_20a2;
