@@ -6,8 +6,12 @@
 #include "math.h"
 #include "math3d.h"
 
-#define CameraFlag (*(u32*)cameraGetFlag())
-#define CAMERA_SPEEDS ((float*)cameraGetSpeeds())
+#define CAMERA cameraGetCamera()
+#define CAMERA_CURRENT_UPDATE_CAM cameraGetCurrentUpdateCam()
+#define CAMERA_UPDATE_CAM_POOL cameraGetUpdateCamPool()
+#define CAMERA_SPEEDS cameraGetSpeeds()
+
+#define CameraFlag (*cameraGetFlag())
 
 typedef enum {
     CAM_FLAG_NULL = 0,
@@ -213,80 +217,37 @@ typedef struct UpdateCam { // 0xb0
 /* 0x94 */ int gameCamIdx;
 /* 0x98 */ float prevExternalMoveZ;
 /* 0x9c */ int pad[2];
-} UpdateCam;
+} UpdateCam_t;
 
 typedef struct CamBlender { // 0xe0
 /* 0x00 */ char data[0xe0];
 } CamBlender;
 
-typedef struct GameCamera { // 0x470
-/* 0x000 */ vec4 pos;
-/* 0x010 */ vec4f rot;
-/* 0x020 */ CameraShake shake;
-/* 0x030 */ CameraShake shakeFwd;
-/* 0x040 */ CameraShake shakeTilt;
-/* 0x050 */ UpdateCam *pCurrentUpdCam;
-/* 0x054 */ UpdateCam *pLastUpdCam;
-/* 0x058 */ char pad_058[0x008];
-/* 0x060 */ CameraStatics camStatics;
-/* 0x150 */ CameraHeroData camHeroData;
-/* 0x2b0 */ CamBlender blender;
-/* 0x390 */ mtx3 uMtx;
-/* 0x3c0 */ mtx4 bsMtx;
-/* 0x400 */ CameraWidget widget;
-/* 0x414 */ char pad_414[0x00c];
-/* 0x420 */ CameraExternal external;
-/* 0x430 */ CameraFov fov;
-/* 0x460 */ int CamUnderWater;
-/* 0x464 */ int camTimer;
-/* 0x468 */ int disableBlendTimer;
-/* 0x46c */ int pad_46c;
-} GameCamera_t;
-
-typedef struct Camera { // 0x1d0
+typedef struct Camera { // known fields through 0x570
 /* 0x000 */ mtx4 rMtx;
 /* 0x040 */ mtx4 fMtx;
 /* 0x080 */ mtx4 nfMtx;
 /* 0x0c0 */ mtx4 hMtx;
 /* 0x100 */ mtx4 hsMtx;
-/* 0x140 */ vec4 pos;
-/* 0x150 */ vec4f rot;
-/* 0x160 */ mtx3 uMtx;
-/* 0x190 */ mtx4 uvMtx;
+/* 0x140 */ VECTOR pos;
+/* 0x150 */ VECTOR rot;
+/* 0x160 */ char pad_160[0x020];
+/* 0x180 */ UpdateCam_t *pCurrentUpdCam;
+/* 0x184 */ UpdateCam_t *pLastUpdCam;
+/* 0x188 */ char pad_188[0x348];
+/* 0x4d0 */ UpdateCam_t updateCamPool[1];
 } Camera_t;
 
-#define LIBRAC1_STATIC_ASSERT(name, expr) typedef char static_assert_##name[(expr) ? 1 : -1]
-#define LIBRAC1_OFFSETOF(type, member) ((u32)&(((type *)0)->member))
-LIBRAC1_STATIC_ASSERT(sizeof_CameraControlActivation, sizeof(CameraControlActivation) == 0x10);
-LIBRAC1_STATIC_ASSERT(sizeof_CameraShake, sizeof(CameraShake) == 0x10);
-LIBRAC1_STATIC_ASSERT(sizeof_CameraFov, sizeof(CameraFov) == 0x30);
-LIBRAC1_STATIC_ASSERT(sizeof_CameraStatics, sizeof(CameraStatics) == 0xf0);
-LIBRAC1_STATIC_ASSERT(sizeof_CameraHeroData, sizeof(CameraHeroData) == 0x160);
-LIBRAC1_STATIC_ASSERT(sizeof_CameraWidget, sizeof(CameraWidget) == 0x14);
-LIBRAC1_STATIC_ASSERT(sizeof_UpdateCam, sizeof(UpdateCam) == 0xb0);
-LIBRAC1_STATIC_ASSERT(sizeof_GAMECAMERA, sizeof(GameCamera_t) == 0x470);
-LIBRAC1_STATIC_ASSERT(sizeof_CAMERA, sizeof(Camera_t) == 0x1d0);
-LIBRAC1_STATIC_ASSERT(offset_CAMERA_rot, LIBRAC1_OFFSETOF(Camera_t, rot) == 0x150);
-LIBRAC1_STATIC_ASSERT(offset_UpdateCam_control, LIBRAC1_OFFSETOF(UpdateCam, control) == 0x70);
-LIBRAC1_STATIC_ASSERT(offset_UpdateCam_type, LIBRAC1_OFFSETOF(UpdateCam, type) == 0x86);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_followMode, LIBRAC1_OFFSETOF(CameraControl, followMode) == 0x10);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_blendEnabled, LIBRAC1_OFFSETOF(CameraControl, blendEnabled) == 0x116);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_positionSmoothing, LIBRAC1_OFFSETOF(CameraControl, positionSmoothing) == 0x11c);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_followDistance, LIBRAC1_OFFSETOF(CameraControl, followDistance) == 0x15c);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_distancePending, LIBRAC1_OFFSETOF(CameraControl, distancePending) == 0x16c);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_pendingFollowDistance, LIBRAC1_OFFSETOF(CameraControl, pendingFollowDistance) == 0x170);
-LIBRAC1_STATIC_ASSERT(offset_CameraControl_currentFollowDistance, LIBRAC1_OFFSETOF(CameraControl, currentFollowDistance) == 0x188);
-#undef LIBRAC1_OFFSETOF
-#undef LIBRAC1_STATIC_ASSERT
-
-// returns top of camera memory
-u32 cameraGetStart(void);
-// returns the camera rot address.
-u32 cameraGetRot(void);
+// returns the camera memory as a typed pointer.
+Camera_t *cameraGetCamera(void);
+// returns the current update camera pointer.
+UpdateCam_t *cameraGetCurrentUpdateCam(void);
+// returns the start of the update camera pool.
+UpdateCam_t *cameraGetUpdateCamPool(void);
 // returns the camera flag address.
-u32 cameraGetFlag(void);
+u32 *cameraGetFlag(void);
 // returns the camera speed table address.
-u32 cameraGetSpeeds(void);
+float *cameraGetSpeeds(void);
 // Sets pending follow distance. When setCurrentDistance is nonzero, also writes the current distance field.
 void cameraSetFollowDistance(float distance, float rate, int setCurrentDistance);
 // Sets a pending follow angle/offset value used by camera follow positioning.

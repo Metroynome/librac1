@@ -5,8 +5,8 @@
 
 
 #define CAMERA_START ((u32)GetAddress(&vaCamera_Start))
-#define CAMERA_ROT  ((u32)GetAddress(&vaCamera_Start) + 0x150)
-#define CAMERA_FLAG ((u32)GetAddress(&vaCamera_Start) + 0x53e3)
+#define CAMERA_ROT  (CAMERA_START + 0x150)
+#define CAMERA_FLAG (CAMERA_START + 0x53e3)
 #define CAMERA_SPEED_TABLE ((u32)GetAddress(&vaCamera_Speeds))
 
 VariableAddress_t vaCamera_Start = {
@@ -522,22 +522,27 @@ VariableAddress_t vaCam_EnableBlendMode = {
 #endif
 };
 
-u32 cameraGetStart(void)
+Camera_t *cameraGetCamera(void)
 {
-    return CAMERA_START;
+    return (Camera_t*)CAMERA_START;
 }
 
-u32 cameraGetRot(void)
+UpdateCam_t *cameraGetCurrentUpdateCam(void)
 {
-    return (u32)CAMERA_ROT;
+    return cameraGetCamera()->pCurrentUpdCam;
 }
 
-u32 cameraGetFlag(void)
+UpdateCam_t *cameraGetUpdateCamPool(void)
 {
-    return CAMERA_FLAG;
+    return cameraGetCamera()->updateCamPool;
 }
 
-u32 cameraGetSpeeds(void)
+u32 *cameraGetFlag(void)
 {
-    return CAMERA_SPEED_TABLE;
+    return (u32*)CAMERA_FLAG;
+}
+
+float *cameraGetSpeeds(void)
+{
+    return (float*)CAMERA_SPEED_TABLE;
 }
