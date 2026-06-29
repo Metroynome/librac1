@@ -6,7 +6,7 @@ int playerCanControl(void)
 {
     Player *player = PLAYER_STRUCT;
 
-    if (gameMode != GAME_MODE_NORMAL || gameModeTimer < 8)
+    if (!isInGameMode(GAME_MODE_NORMAL))
         return 0;
 
     if (player == NULL || player->pMoby == NULL)
