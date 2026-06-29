@@ -9,8 +9,18 @@
 #define Level (*(volatile int*)0x0015ee84)
 #define worldupdateTime (*(volatile int*)0x0015f4f8)
 #define gameMode (*(volatile int*)0x0015f6c4)
+#define gameModeTimer (*(volatile int*)0x0015f6c8)
+#define levelLoadedTimer (*(volatile int*)0x0015f6cc)
+#define levelLoopExitFlag (*(volatile int*)0x0015f670)
+#define movieLoadRequest (*(volatile int*)0x0015f730)
+#define asyncLoadActive (*(volatile int*)0x00151804)
+#define asyncLoadIndex (*(volatile short*)0x00151808)
+#define asyncLoadFlags (*(volatile short*)0x0015180a)
+#define asyncLoadMode (*(volatile short*)0x0015180c)
+#define asyncLoadReady (*(volatile short*)0x0015180e)
+#define asyncLoadDelay (*(volatile int*)0x00151818)
+#define asyncLoadTimeout (*(volatile int*)0x0015181c)
 #define gameMode_startMenu (*(volatile innt*)0x0015f704)
-#define __gp (0x00166d00)
 #else
 // NTSCU and PAL are the same
 // Addresses are different if on start menu versus in game.
@@ -18,8 +28,18 @@
 #define Level (*(volatile int*)0x0015ed84)
 #define worldupdateTime (*(volatile int*)0x0015f3f8)
 #define gameMode (*(volatile int*)0x0015f5c4)
+#define gameModeTimer (*(volatile int*)0x0015f5c8)
+#define levelLoadedTimer (*(volatile int*)0x0015f5cc)
+#define levelLoopExitFlag (*(volatile int*)0x0015f570)
+#define movieLoadRequest (*(volatile int*)0x0015f630)
+#define asyncLoadActive (*(volatile int*)0x00151704)
+#define asyncLoadIndex (*(volatile short*)0x00151708)
+#define asyncLoadFlags (*(volatile short*)0x0015170a)
+#define asyncLoadMode (*(volatile short*)0x0015170c)
+#define asyncLoadReady (*(volatile short*)0x0015170e)
+#define asyncLoadDelay (*(volatile int*)0x00151718)
+#define asyncLoadTimeout (*(volatile int*)0x0015171c)
 #define gameMode_startMenu (*(volatile innt*)0x0015f604)
-#define __gp (0x00166c00)
 #endif
 
 typedef enum {

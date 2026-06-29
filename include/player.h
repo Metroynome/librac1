@@ -9,10 +9,10 @@
 #include "moby.h"
 
 #ifdef RAC1_NTSCJ
-#define PLAYER_1_STRUCT ((Player*)0x00013f450)
+#define PLAYER_STRUCT ((Player*)0x00013f450)
 #define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ee60)
 #else
-#define PLAYER_1_STRUCT ((Player*)0x00013f350)
+#define PLAYER_STRUCT ((Player*)0x00013f350)
 #define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ed60)
 #endif
 
@@ -335,18 +335,22 @@ typedef struct Player { // 0x2310
 /* 0x20ae */ char unk_20ae;
 /* 0x20af */ char hideWeapon;
 /* 0x20b0 */ char unk_20b0;
-/* 0x20b1 */ char unk_20b1;
+/* 0x20b1 */ char cutsceneControlLock;
 /* 0x20b2 */ char unk_20b2;
 /* 0x20b3 */ char forceCamTurnOff;
 /* 0x20b4 */ char unk_20b4[0x194];
 /* 0x2248 */ Moby *unk_2248;
 /* 0x224c */ char unk_224c[0x50];
 /* 0x229c */ float inputMagnitude;
-/* 0x22a0 */ char unk_22a0[0x34];
+/* 0x22a0 */ char unk_22a0[0x8];
+/* 0x22a8 */ int gameplayReady;
+/* 0x22ac */ char unk_22ac[0x28];
 /* 0x22d4 */ short timer_22d4;
 /* 0x22d6 */ short timer_22d6;
 /* 0x22d8 */ char unk_22d8[0x38];
 } Player;
 typedef Player Hero;
+
+int playerCanControl(void);
 
 #endif
