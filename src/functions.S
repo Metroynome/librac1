@@ -6,15 +6,16 @@
 #define MAINMENU_DETECT_WORD1 (0x2407ffff)
 #define MAINMENU_DETECT_WORD2 (0x0280402d)
 #define MAINMENU_DETECT_WORD3 (0x0c07e07e)
+
 #elif RAC1_PAL
-// NTSCU and PAL game globals are the same.
-#define gameMode (0x0015f5c4)
+#define gameMode (0x0015f5a4)
 #define Level (0x0015ed84)
 #define MAINMENU_DETECT_ADDR (0x0021c100)
 #define MAINMENU_DETECT_WORD0 (0x10540006)
 #define MAINMENU_DETECT_WORD1 (0x24040001)
 #define MAINMENU_DETECT_WORD2 (0x8e060014)
 #define MAINMENU_DETECT_WORD3 (0x0c08b55e)
+
 #else
 #define gameMode (0x0015f5c4)
 #define Level (0x0015ed84)
