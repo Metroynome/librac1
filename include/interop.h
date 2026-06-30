@@ -20,6 +20,7 @@ Possible GAME_MAP_ID:
 */
 
 typedef struct VariableAddress {
+	u32 MainMenu; // Level: -1
 	u32 Veldin1; // Level: 0
 	u32 Novalis; // Level: 1
 	u32 Aridia; // Level: 2
