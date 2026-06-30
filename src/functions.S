@@ -1,6 +1,6 @@
 #ifdef RAC1_NTSCJ
-#define gameMode (0x0015f6c4)
 #define Level (0x0015ee84)
+#define gameMode (0x0015f6a8)
 #define MAINMENU_DETECT_ADDR (0x0021c880)
 #define MAINMENU_DETECT_WORD0 (0x0260302d)
 #define MAINMENU_DETECT_WORD1 (0x2407ffff)

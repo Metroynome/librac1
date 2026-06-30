@@ -8,8 +8,8 @@
 #ifdef RAC1_NTSCJ
 #define Level (*(volatile int*)0x0015ee84)
 #define worldupdateTime (*(volatile int*)0x0015f4f8)
-#define gameMode (*(volatile int*)0x0015f6c4)
-#define gameModeTimer (*(volatile int*)0x0015f6c8)
+#define gameMode (*(volatile int*)0x0015f6a8)
+#define gameModeTimer (*(volatile int*)0x0015f6ac)
 #define levelLoadedTimer (*(volatile int*)0x0015f6cc)
 #define levelLoopExitFlag (*(volatile int*)0x0015f670)
 #define movieLoadRequest (*(volatile int*)0x0015f730)
