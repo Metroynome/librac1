@@ -1,5 +1,5 @@
 EE_LIB_NAME = librac1ntscu.a
-EE_DEFS = -DRAC1_NTSCU -DRAC_NTSCU -DNTSCU
+EE_DEFS = -DRAC1_NTSCU -DRAC_NTSCU -DNTSCU -DRAC1_V100 -DRAC_V100 -DRAC1_NTSCU_V100
 
 include ${CURDIR}/Makefile.defs
 include $(PS2SDK)/samples/Makefile.pref

@@ -2,7 +2,27 @@
 #include "interop.h"
 
 VariableAddress_t vaFastAngleCosF = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x001ff7b0,
+	.Novalis = 0x00221640,
+	.Aridia = 0x00210798,
+	.Kerwan = 0x001f90c8,
+	.Eudora = 0x001f2198,
+	.Rilgar = 0x0022e498,
+	.NebulaG34 = 0x00217850,
+	.Umbris = 0x00227598,
+	.Batalia = 0x002122b0,
+	.Gaspar = 0x0021f390,
+	.Orxon = 0x001f2d98,
+	.Pokitaru = 0x00231098,
+	.Hoven = 0x00222640,
+	.OltanisOrbit = 0x0020b218,
+	.Oltanis = 0x00212dc0,
+	.Quartu = 0x001f8ea8,
+	.Kalebo = 0x001fdf98,
+	.VeldinOrbit = 0x001fc8d8,
+	.Veldin2 = 0x00208518,
+#elif RAC1_PAL
 	.Veldin1 = 0x001ff3b0,
 	.Novalis = 0x00221240,
 	.Aridia = 0x00210398,
@@ -66,7 +86,27 @@ VariableAddress_t vaFastAngleCosF = {
 };
 
 VariableAddress_t vaATAN2F = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x001ff860,
+	.Novalis = 0x002216f0,
+	.Aridia = 0x00210848,
+	.Kerwan = 0x001f9178,
+	.Eudora = 0x001f2248,
+	.Rilgar = 0x0022e548,
+	.NebulaG34 = 0x00217900,
+	.Umbris = 0x00227648,
+	.Batalia = 0x00212360,
+	.Gaspar = 0x0021f440,
+	.Orxon = 0x001f2e48,
+	.Pokitaru = 0x00231148,
+	.Hoven = 0x002226f0,
+	.OltanisOrbit = 0x0020b2c8,
+	.Oltanis = 0x00212e70,
+	.Quartu = 0x001f8f58,
+	.Kalebo = 0x001fe048,
+	.VeldinOrbit = 0x001fc988,
+	.Veldin2 = 0x002085c8,
+#elif RAC1_PAL
 	.Veldin1 = 0x001ff460,
 	.Novalis = 0x002212f0,
 	.Aridia = 0x00210448,
@@ -130,7 +170,27 @@ VariableAddress_t vaATAN2F = {
 };
 
 VariableAddress_t vaFastAngleSinF = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x001ff798,
+	.Novalis = 0x00221628,
+	.Aridia = 0x00210780,
+	.Kerwan = 0x001f90b0,
+	.Eudora = 0x001f2180,
+	.Rilgar = 0x0022e480,
+	.NebulaG34 = 0x00217838,
+	.Umbris = 0x00227580,
+	.Batalia = 0x00212298,
+	.Gaspar = 0x0021f378,
+	.Orxon = 0x001f2d80,
+	.Pokitaru = 0x00231080,
+	.Hoven = 0x00222628,
+	.OltanisOrbit = 0x0020b200,
+	.Oltanis = 0x00212da8,
+	.Quartu = 0x001f8e90,
+	.Kalebo = 0x001fdf80,
+	.VeldinOrbit = 0x001fc8c0,
+	.Veldin2 = 0x00208500,
+#elif RAC1_PAL
 	.Veldin1 = 0x001ff398,
 	.Novalis = 0x00221228,
 	.Aridia = 0x00210380,

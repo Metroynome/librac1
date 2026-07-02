@@ -10,10 +10,13 @@
 
 #ifdef RAC1_NTSCJ
 #define PLAYER_STRUCT ((Player*)0x00013f450)
-#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ee60)
+#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0015ee60)
+#elif RAC1_PAL_V200
+#define PLAYER_STRUCT ((Player*)0x00013f450)
+#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0015ee60)
 #else
 #define PLAYER_STRUCT ((Player*)0x00013f350)
-#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0x0015ed60)
+#define PLAYER_GLOBAL_TWEAKERS ((TwakerTable_t*)0x0015ed60)
 #endif
 
 typedef enum PlayerState {

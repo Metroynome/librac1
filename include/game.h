@@ -20,7 +20,23 @@
 #define asyncLoadReady (*(volatile short*)0x0015180e)
 #define asyncLoadDelay (*(volatile int*)0x00151818)
 #define asyncLoadTimeout (*(volatile int*)0x0015181c)
-#define gameMode_startMenu (*(volatile innt*)0x0015f704)
+#define gameMode_startMenu (*(volatile int*)0x0015f704)
+#elif RAC1_PAL_V200
+#define Level (*(volatile int*)0x0015ee84)
+#define worldupdateTime (*(volatile int*)0x0015f4f8)
+#define gameMode (*(volatile int*)0x0015f6a8)
+#define gameModeTimer (*(volatile int*)0x0015f6ac)
+#define levelLoadedTimer (*(volatile int*)0x0015f6b0)
+#define levelLoopExitFlag (*(volatile int*)0x0015f670)
+#define movieLoadRequest (*(volatile int*)0x0015f730)
+#define asyncLoadActive (*(volatile int*)0x00151804)
+#define asyncLoadIndex (*(volatile short*)0x00151808)
+#define asyncLoadFlags (*(volatile short*)0x0015180a)
+#define asyncLoadMode (*(volatile short*)0x0015180c)
+#define asyncLoadReady (*(volatile short*)0x0015180e)
+#define asyncLoadDelay (*(volatile int*)0x00151818)
+#define asyncLoadTimeout (*(volatile int*)0x0015181c)
+#define gameMode_startMenu (*(volatile int*)0x0015f704)
 #elif RAC1_PAL
 #define Level (*(volatile int*)0x0015ed84)
 #define worldupdateTime (*(volatile int*)0x0015f3f8)
@@ -36,7 +52,7 @@
 #define asyncLoadReady (*(volatile short*)0x0015170e)
 #define asyncLoadDelay (*(volatile int*)0x00151718)
 #define asyncLoadTimeout (*(volatile int*)0x0015171c)
-#define gameMode_startMenu (*(volatile innt*)0x0015f604)
+#define gameMode_startMenu (*(volatile int*)0x0015f604)
 #else
 #define Level (*(volatile int*)0x0015ed84)
 #define worldupdateTime (*(volatile int*)0x0015f3f8)
@@ -52,7 +68,7 @@
 #define asyncLoadReady (*(volatile short*)0x0015170e)
 #define asyncLoadDelay (*(volatile int*)0x00151718)
 #define asyncLoadTimeout (*(volatile int*)0x0015171c)
-#define gameMode_startMenu (*(volatile innt*)0x0015f604)
+#define gameMode_startMenu (*(volatile int*)0x0015f604)
 #endif
 
 typedef enum {

@@ -7,6 +7,15 @@
 #define MAINMENU_DETECT_WORD2 (0x0280402d)
 #define MAINMENU_DETECT_WORD3 (0x0c07e07e)
 
+#elif RAC1_PAL_V200
+#define gameMode (0x0015f6a8)
+#define Level (0x0015ee84)
+#define MAINMENU_DETECT_ADDR (0x001e90f8)
+#define MAINMENU_DETECT_WORD0 (0x0621fff7)
+#define MAINMENU_DETECT_WORD1 (0x24a50004)
+#define MAINMENU_DETECT_WORD2 (0x0000882d)
+#define MAINMENU_DETECT_WORD3 (0x26c65580)
+
 #elif RAC1_PAL
 #define gameMode (0x0015f5a4)
 #define Level (0x0015ed84)

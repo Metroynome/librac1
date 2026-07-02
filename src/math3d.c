@@ -7,7 +7,27 @@
 #include <tamtypes.h>
   
 VariableAddress_t vaEuler_To_Matrix = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x001ffa9c,
+	.Novalis = 0x0022192c,
+	.Aridia = 0x00210a84,
+	.Kerwan = 0x001f93b4,
+	.Eudora = 0x001f2484,
+	.Rilgar = 0x0022e784,
+	.NebulaG34 = 0x00217b3c,
+	.Umbris = 0x00227884,
+	.Batalia = 0x0021259c,
+	.Gaspar = 0x0021f67c,
+	.Orxon = 0x001f3084,
+	.Pokitaru = 0x00231384,
+	.Hoven = 0x0022292c,
+	.OltanisOrbit = 0x0020b504,
+	.Oltanis = 0x002130ac,
+	.Quartu = 0x001f9194,
+	.Kalebo = 0x001fe284,
+	.VeldinOrbit = 0x001fcbc4,
+	.Veldin2 = 0x00208804,
+#elif RAC1_PAL
 	.Veldin1 = 0x001ff69c,
 	.Novalis = 0x0022152c,
 	.Aridia = 0x00210684,

@@ -10,7 +10,27 @@
 #define CAMERA_SPEED_TABLE ((u32)GetAddress(&vaCamera_Speeds))
 
 VariableAddress_t vaCamera_Start = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x00166d80,
+	.Novalis = 0x00167180,
+	.Aridia = 0x00167300,
+	.Kerwan = 0x00166e00,
+	.Eudora = 0x00166e80,
+	.Rilgar = 0x00167180,
+	.NebulaG34 = 0x00167500,
+	.Umbris = 0x00166d80,
+	.Batalia = 0x00167500,
+	.Gaspar = 0x00166e80,
+	.Orxon = 0x00167180,
+	.Pokitaru = 0x00167700,
+	.Hoven = 0x00167180,
+	.OltanisOrbit = 0x00167000,
+	.Oltanis = 0x00167480,
+	.Quartu = 0x00167300,
+	.Kalebo = 0x00167100,
+	.VeldinOrbit = 0x00167600,
+	.Veldin2 = 0x00167700,
+#elif RAC1_PAL
     .Veldin1 = 0x00166c80,
     .Novalis = 0x00167080,
     .Aridia = 0x00167200,
@@ -74,7 +94,27 @@ VariableAddress_t vaCamera_Start = {
 };
 
 VariableAddress_t vaCamera_Speeds = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x00161e80,
+	.Novalis = 0x001622b8,
+	.Aridia = 0x001623f0,
+	.Kerwan = 0x00161ea8,
+	.Eudora = 0x00161fb0,
+	.Rilgar = 0x00162238,
+	.NebulaG34 = 0x001625d0,
+	.Umbris = 0x00161e88,
+	.Batalia = 0x00162648,
+	.Gaspar = 0x00161f90,
+	.Orxon = 0x00162260,
+	.Pokitaru = 0x001627d8,
+	.Hoven = 0x001622a0,
+	.OltanisOrbit = 0x00162128,
+	.Oltanis = 0x00162520,
+	.Quartu = 0x00162420,
+	.Kalebo = 0x00162228,
+	.VeldinOrbit = 0x001626d0,
+	.Veldin2 = 0x001627f8,
+#elif RAC1_PAL
     .Veldin1 = 0x00161d70,
     .Novalis = 0x001621a8,
     .Aridia = 0x001622e0,
@@ -139,7 +179,27 @@ VariableAddress_t vaCamera_Speeds = {
 
 // --------------------------------------------
 VariableAddress_t vaCam_SetFollowDistance = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e9900,
+	.Novalis = 0x00314a00,
+	.Aridia = 0x002f7788,
+	.Kerwan = 0x002e8100,
+	.Eudora = 0x002ed178,
+	.Rilgar = 0x00324fe0,
+	.NebulaG34 = 0x003118b0,
+	.Umbris = 0x003251a0,
+	.Batalia = 0x003114b0,
+	.Gaspar = 0x003113c0,
+	.Orxon = 0x002f1c48,
+	.Pokitaru = 0x00324c70,
+	.Hoven = 0x003119b0,
+	.OltanisOrbit = 0x00313ea8,
+	.Oltanis = 0x003103d8,
+	.Quartu = 0x002f3ae0,
+	.Kalebo = 0x002efae8,
+	.VeldinOrbit = 0x002fc598,
+	.Veldin2 = 0x00302518,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7df8,
     .Novalis = 0x00312f58,
     .Aridia = 0x002f5c80,
@@ -203,7 +263,27 @@ VariableAddress_t vaCam_SetFollowDistance = {
 };
 
 VariableAddress_t vaCam_SetFollowAngleOrOffset = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e9964,
+	.Novalis = 0x00314a64,
+	.Aridia = 0x002f77ec,
+	.Kerwan = 0x002e8164,
+	.Eudora = 0x002ed1dc,
+	.Rilgar = 0x00325044,
+	.NebulaG34 = 0x00311914,
+	.Umbris = 0x003251dc,
+	.Batalia = 0x003114ec,
+	.Gaspar = 0x00311424,
+	.Orxon = 0x002f1cac,
+	.Pokitaru = 0x00324cd4,
+	.Hoven = 0x00311a14,
+	.OltanisOrbit = 0x00313ee4,
+	.Oltanis = 0x0031043c,
+	.Quartu = 0x002f3b44,
+	.Kalebo = 0x002efb24,
+	.VeldinOrbit = 0x002fc5fc,
+	.Veldin2 = 0x00302554,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7e5c,
     .Novalis = 0x00312fbc,
     .Aridia = 0x002f5ce4,
@@ -267,7 +347,27 @@ VariableAddress_t vaCam_SetFollowAngleOrOffset = {
 };
 
 VariableAddress_t vaCam_SetElevation = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e999c,
+	.Novalis = 0x00314a9c,
+	.Aridia = 0x002f7824,
+	.Kerwan = 0x002e819c,
+	.Eudora = 0x002ed214,
+	.Rilgar = 0x0032507c,
+	.NebulaG34 = 0x0031194c,
+	.Umbris = 0x0032521c,
+	.Batalia = 0x0031152c,
+	.Gaspar = 0x0031145c,
+	.Orxon = 0x002f1ce4,
+	.Pokitaru = 0x00324d0c,
+	.Hoven = 0x00311a4c,
+	.OltanisOrbit = 0x00313f24,
+	.Oltanis = 0x00310474,
+	.Quartu = 0x002f3b7c,
+	.Kalebo = 0x002efb64,
+	.VeldinOrbit = 0x002fc634,
+	.Veldin2 = 0x00302594,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7e94,
     .Novalis = 0x00312ff4,
     .Aridia = 0x002f5d1c,
@@ -331,7 +431,27 @@ VariableAddress_t vaCam_SetElevation = {
 };
 
 VariableAddress_t vaCam_SetFollowMode = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e9a14,
+	.Novalis = 0x00314b14,
+	.Aridia = 0x002f789c,
+	.Kerwan = 0x002e8214,
+	.Eudora = 0x002ed28c,
+	.Rilgar = 0x003250f4,
+	.NebulaG34 = 0x003119c4,
+	.Umbris = 0x00325294,
+	.Batalia = 0x003115a4,
+	.Gaspar = 0x003114d4,
+	.Orxon = 0x002f1d5c,
+	.Pokitaru = 0x00324d84,
+	.Hoven = 0x00311ac4,
+	.OltanisOrbit = 0x00313f9c,
+	.Oltanis = 0x003104ec,
+	.Quartu = 0x002f3bf4,
+	.Kalebo = 0x002efbdc,
+	.VeldinOrbit = 0x002fc6ac,
+	.Veldin2 = 0x0030260c,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7f0c,
     .Novalis = 0x0031306c,
     .Aridia = 0x002f5d94,
@@ -395,7 +515,27 @@ VariableAddress_t vaCam_SetFollowMode = {
 };
 
 VariableAddress_t vaCam_SetFollowSmoothing = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e9a3c,
+	.Novalis = 0x00314b3c,
+	.Aridia = 0x002f78c4,
+	.Kerwan = 0x002e823c,
+	.Eudora = 0x002ed2b4,
+	.Rilgar = 0x0032511c,
+	.NebulaG34 = 0x003119ec,
+	.Umbris = 0x003252bc,
+	.Batalia = 0x003115cc,
+	.Gaspar = 0x003114fc,
+	.Orxon = 0x002f1d84,
+	.Pokitaru = 0x00324dac,
+	.Hoven = 0x00311aec,
+	.OltanisOrbit = 0x00313fc4,
+	.Oltanis = 0x00310514,
+	.Quartu = 0x002f3c1c,
+	.Kalebo = 0x002efc04,
+	.VeldinOrbit = 0x002fc6d4,
+	.Veldin2 = 0x00302634,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7f34,
     .Novalis = 0x00313094,
     .Aridia = 0x002f5dbc,
@@ -459,7 +599,27 @@ VariableAddress_t vaCam_SetFollowSmoothing = {
 };
 
 VariableAddress_t vaCam_EnableBlendMode = {
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+	.Veldin1 = 0x002e9af8,
+	.Novalis = 0x00314bf8,
+	.Aridia = 0x002f7980,
+	.Kerwan = 0x002e82f8,
+	.Eudora = 0x002ed370,
+	.Rilgar = 0x003251d8,
+	.NebulaG34 = 0x00311aa8,
+	.Umbris = 0x00325378,
+	.Batalia = 0x00311688,
+	.Gaspar = 0x003115b8,
+	.Orxon = 0x002f1e40,
+	.Pokitaru = 0x00324e68,
+	.Hoven = 0x00311ba8,
+	.OltanisOrbit = 0x00314038,
+	.Oltanis = 0x003105d0,
+	.Quartu = 0x002f3cd8,
+	.Kalebo = 0x002efc78,
+	.VeldinOrbit = 0x002fc790,
+	.Veldin2 = 0x003026f0,
+#elif RAC1_PAL
     .Veldin1 = 0x002e7ff0,
     .Novalis = 0x00313150,
     .Aridia = 0x002f5e78,

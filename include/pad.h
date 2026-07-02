@@ -22,7 +22,9 @@
 #include <tamtypes.h>
 #include "types.h"
 
-#ifdef RAC1_PAL
+#ifdef RAC1_PAL_V200
+#define P1_PAD                              ((PAD*)0x0013ca40)
+#elif RAC1_PAL
 #define P1_PAD                              ((PAD*)0x0013c940)
 #elif RAC1_NTSCJ
 #define P1_PAD                              ((PAD*)0x0013ca40)
