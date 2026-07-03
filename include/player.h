@@ -48,8 +48,8 @@ typedef enum PlayerState {
 	PLAYER_STATE_LEDGE_TRAVERSE_LEFT = 25,
 	PLAYER_STATE_LEDGE_TRAVERSE_RIGHT = 26,
 	PLAYER_STATE_LEDGE_JUMP = 27,
-	PLAYER_STATE_VISIBOMB = 28,
-	PLAYER_STATE_TARGETING = 29,
+	PLAYER_STATE_TARGETING = 28,
+	PLAYER_STATE_VISIBOMB = 29,
 	PLAYER_STATE_GUN_WAITING = 30,
 	PLAYER_STATE_WALLOPER_ATTACK = 31,
 	PLAYER_STATE_ATTACK_BOUNCE = 32,
@@ -312,7 +312,9 @@ typedef struct Player { // 0x2310
 /* 0x10b8 */ int weaponHeldId;
 /* 0x10bc */ char unk_10bc[0xc64];
 /* 0x1d20 */ VECTOR sitckInput;
-/* 0x1d30 */ char unk_1d30[0x350];
+/* 0x1d30 */ char unk_1d30[0x2b0];
+/* 0x1fe0 */ Moby *pVisibomb;
+/* 0x1fe4 */ char unk_1fe4[0x9c];
 /* 0x2080 */ Moby *pMoby;
 /* 0x2084 */ int state;
 /* 0x2088 */ int subState;
@@ -333,7 +335,7 @@ typedef struct Player { // 0x2310
 /* 0x20a9 */ char unk_20a9;
 /* 0x20aa */ char unk_20aa;
 /* 0x20ab */ char unk_20ab;
-/* 0x20ac */ char unk_20ac;
+/* 0x20ac */ char isVisibombing;
 /* 0x20ad */ char unk_20ad;
 /* 0x20ae */ char unk_20ae;
 /* 0x20af */ char hideWeapon;

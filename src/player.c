@@ -12,7 +12,7 @@ int playerCanControl(void)
     if (player == NULL || player->pMoby == NULL)
         return 0;
 
-    if (player->cutsceneControlLock != 0 || player->gameplayReady == 0)
+    if (player->cutsceneControlLock || !player->gameplayReady || player->isVisibombing)
         return 0;
 
     if (player->state == PLAYER_STATE_CUT_SCENE)
