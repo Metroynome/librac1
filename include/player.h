@@ -291,7 +291,7 @@ typedef struct HeroGround {
 /* start:
 0013f350
 */
-typedef struct Player { // 0x2310
+typedef struct Hero { // 0x2310
 /* 0x0000 */ MATRIX mtx;
 /* 0x0040 */ MATRIX invMtx;
 /* 0x0080 */ VECTOR pos;
@@ -353,8 +353,8 @@ typedef struct Player { // 0x2310
 /* 0x22d4 */ short timer_22d4;
 /* 0x22d6 */ short timer_22d6;
 /* 0x22d8 */ char unk_22d8[0x38];
-} Player;
-typedef Player Hero;
+} Hero;
+typedef Hero Player;
 
 int playerCanControl(void);
 

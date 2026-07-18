@@ -751,6 +751,17 @@ enum MobyIds {
     MOBY_ID_CAVE_ROOF = 0x083a,
 };
 
+typedef struct MobySeq {
+/* 0x00 */ char unk_00[0x10];
+/* 0x10 */ u8 frameCnt;
+/* 0x11 */ char soundDefId;
+/* 0x12 */ char soundFlags;
+/* 0x13 */ char unk_13[5];
+/* 0x18 */ float defaultFrameDuration;
+/* 0x1c */ void *frames[0];
+} MobySeq;
+
+/* RAC1 moby layout checked against rac1.level5 constructor/update code in Ghidra. */
 typedef struct Moby { // 0x100
 /* 0x00 */ VECTOR bSphere;
 /* 0x10 */ VECTOR position;
@@ -761,10 +772,47 @@ typedef struct Moby { // 0x100
 /* 0x24 */ struct MobyClass *pClass;
 /* 0x28 */ struct Moby *pChain;
 /* 0x2c */ float scale;
-/* 0x30 */ char unk_30[0x44];
-/* 0x74 */ void *pUpdate;
+/* 0x30 */ char updateDist;
+/* 0x31 */ u8 drawn;
+/* 0x32 */ u16 drawDist;
+/* 0x34 */ u16 modeBits;
+/* 0x36 */ u16 lights1;
+/* 0x38 */ u32 lights[2];
+/* 0x40 */ vec4 unk_40;
+/* 0x50 */ char animFrame;
+/* 0x51 */ char animFrameNext;
+/* 0x52 */ char animSeqIdPrev;
+/* 0x53 */ char animSeqId;
+/* 0x54 */ float animSeqT;
+/* 0x58 */ float animSpeed;
+/* 0x5c */ float animFrameDuration;
+/* 0x60 */ char unk_60[0x8];
+/* 0x68 */ void *animFrameData;
+/* 0x6c */ void *animFrameDataNext;
+/* 0x70 */ u8 animFlags;
+/* 0x71 */ char animSeqIdCached;
+/* 0x72 */ char lodTrans;
+/* 0x73 */ char metal;
+/* 0x74 */ void (*pUpdate)(struct Moby *);
 /* 0x78 */ void *pVar;
-/* 0x7c */ char unk_7c[0x44];
+/* 0x7c */ char soundDefId;
+/* 0x7d */ char soundChannel;
+/* 0x7e */ char soundFlags;
+/* 0x7f */ char shadow;
+/* 0x80 */ char unk_80[0x10];
+/* 0x90 */ u32 glow_rgba;
+/* 0x94 */ short int *collision;
+/* 0x98 */ char unk_98[0x8];
+/* 0xa0 */ char gridMinX;
+/* 0xa1 */ char gridMinY;
+/* 0xa2 */ char gridMaxX;
+/* 0xa3 */ char gridMaxY;
+/* 0xa4 */ char triggers;
+/* 0xa5 */ char unk_a5;
+/* 0xa6 */ short oClass;
+/* 0xa8 */ int UID;
+/* 0xac */ int mobyIndex;
+/* 0xb0 */ char unk_b0[0x10];
 /* 0xc0 */ mtx3 rotMtx;
 /* 0xf0 */ vec4 rot;
 } Moby;
