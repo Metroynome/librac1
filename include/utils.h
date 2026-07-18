@@ -49,4 +49,6 @@ int isInScratchpadMemory(void* p);
  */
 int isInIopMemory(void* p);
 
+void POKE_LUI_ORI(u32 luiAddr, u32 oriAddr, u32 value, int reg);
+
 #endif // _LIBRAC1_UTILS_H_

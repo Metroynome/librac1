@@ -2,6 +2,16 @@
 #include "utils.h"
 
 //--------------------------------------------------------------------------------
+void POKE_LUI_ORI(u32 luiAddr, u32 oriAddr, u32 value, int reg)
+{
+    u32 hi = (value >> 16) & 0xffff;
+    u32 lo = value & 0xffff;
+
+    POKE_U32(luiAddr, 0x3c000000 | (reg << 16) | hi);
+    POKE_U32(oriAddr, 0x34000000 | (reg << 21) | (reg << 16) | lo);
+}
+
+//--------------------------------------------------------------------------------
 int isInEEMemory(void* p)
 {
     u32 upper = (u32)p >> 16;

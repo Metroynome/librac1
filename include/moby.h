@@ -751,17 +751,6 @@ enum MobyIds {
     MOBY_ID_CAVE_ROOF = 0x083a,
 };
 
-typedef struct MobySeq {
-/* 0x00 */ char unk_00[0x10];
-/* 0x10 */ u8 frameCnt;
-/* 0x11 */ char soundDefId;
-/* 0x12 */ char soundFlags;
-/* 0x13 */ char unk_13[5];
-/* 0x18 */ float defaultFrameDuration;
-/* 0x1c */ void *frames[0];
-} MobySeq;
-
-/* RAC1 moby layout checked against rac1.level5 constructor/update code in Ghidra. */
 typedef struct Moby { // 0x100
 /* 0x00 */ VECTOR bSphere;
 /* 0x10 */ VECTOR position;
@@ -801,7 +790,7 @@ typedef struct Moby { // 0x100
 /* 0x7f */ char shadow;
 /* 0x80 */ char unk_80[0x10];
 /* 0x90 */ u32 glow_rgba;
-/* 0x94 */ short int *collision;
+/* 0x94 */ int *collision;
 /* 0x98 */ char unk_98[0x8];
 /* 0xa0 */ char gridMinX;
 /* 0xa1 */ char gridMinY;
@@ -816,6 +805,48 @@ typedef struct Moby { // 0x100
 /* 0xc0 */ mtx3 rotMtx;
 /* 0xf0 */ vec4 rot;
 } Moby;
+
+typedef struct MobySeq {
+/* 0x00 */ char unk_00[0x10];
+/* 0x10 */ u8 frameCnt;
+/* 0x11 */ char soundDefId;
+/* 0x12 */ char soundFlags;
+/* 0x13 */ char unk_13[5];
+/* 0x18 */ float defaultFrameDuration;
+/* 0x1c */ void *frames[0];
+} MobySeq;
+
+typedef struct M0918_Vars_Hoverboard_Lady_PartTransform { // 0x80
+/* 0x00 */ char unk_00[0x64];
+/* 0x64 */ float reactionWobble;
+/* 0x68 */ char unk_68[0x08];
+/* 0x70 */ float reactionScale;
+/* 0x74 */ char unk_74[0x0c];
+} M0918_Vars_Hoverboard_Lady_PartTransform;
+
+typedef struct M0918_Vars_Hoverboard_Lady { // 0x280
+/* 0x000 */ char unk_000[0x04];
+/* 0x004 */ short previousDialogState;
+/* 0x006 */ char unk_006[0x02];
+/* 0x008 */ char dialogTrigger;
+/* 0x009 */ char unk_009[0x17];
+/* 0x020 */ char *pName;
+/* 0x024 */ char unk_024[0x12];
+/* 0x036 */ short dialogState;
+/* 0x038 */ void *pDialogData;
+/* 0x03c */ char unk_03c[0x04];
+/* 0x040 */ M0918_Vars_Hoverboard_Lady_PartTransform bodyPart0;
+/* 0x0c0 */ M0918_Vars_Hoverboard_Lady_PartTransform bodyPart1;
+/* 0x140 */ M0918_Vars_Hoverboard_Lady_PartTransform chestPart0;
+/* 0x1c0 */ M0918_Vars_Hoverboard_Lady_PartTransform chestPart1;
+/* 0x240 */ char unk_240[0x04];
+/* 0x244 */ int animChangeTimer;
+/* 0x248 */ int lookAtRatchetTimer;
+/* 0x24c */ int wanderTargetTimer;
+/* 0x250 */ vec4 wanderTargetPos;
+/* 0x260 */ int chestScaleReactionCounter;
+/* 0x264 */ char unk_264[0x1c];
+} M0918_Vars_Hoverboard_Lady;
 
 struct MobyClass { // 0x50
 /* 0x00 */ void *packets;
