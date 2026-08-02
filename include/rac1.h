@@ -1,8 +1,8 @@
-#ifndef _LIBGC_GC_H_
-#define _LIBGC_GC_H_
+#ifndef _LIBRAC1_RAC1_H_
+#define _LIBRAC1_RAC1_H_
 
 /*
- * NAME :		gcPreUpdate
+ * NAME :		racPreUpdate
  * DESCRIPTION :
  * 			Must be called at the beginning of each tick.
  * NOTES :
@@ -10,10 +10,10 @@
  * RETURN :
  * AUTHOR :
  */
-void gcPreUpdate(void);
+void racPreUpdate(void);
 
 /*
- * NAME :		gcPostUpdate
+ * NAME :		racPostUpdate
  * DESCRIPTION :
  * 			Must be called at the end of each tick.
  * NOTES :
@@ -21,6 +21,6 @@ void gcPreUpdate(void);
  * RETURN :
  * AUTHOR :
  */
-void gcPostUpdate(void);
+void racPostUpdate(void);
 
-#endif // _LIBGC_GC_H_
+#endif // _LIBRAC1_RAC1_H_
