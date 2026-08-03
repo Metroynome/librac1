@@ -5,6 +5,7 @@
 #include "types.h"
 #include "moby.h"
 
+
 #ifdef RAC1_NTSCJ
 #define UI_GLOBALS_ADDRESS 0x001ba270
 #elif RAC1_PAL_V200
@@ -21,10 +22,30 @@
 #define UI_RESOURCE_FLAG_LOADING     4
 #define UI_RESOURCE_POOL_SMALL_SIZE 0x11800
 #define UI_RESOURCE_POOL_LARGE_SIZE 0x4f000
+#define UI_MENU_MAX_ELEMENTS 14
+#define UI_CUSTOM_MENU_MAX_OPTIONS UI_MENU_MAX_ELEMENTS
 
-#define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC |UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC |UI_FLAG_DISABLED_OPTION |UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
+#define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC | UI_FLAG_DISABLED_OPTION | UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
 #define UI_FLAG_MASK_LOCKED_CHECK (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
 
+#define UI_GLOBALS (*(UiGlobals_t*)UI_GLOBALS_ADDRESS)
+#define UI_ACTIVE_INDEX UI_GLOBALS.activeIndex
+#define UI_ACTIVE_POINTER UI_GLOBALS.pActiveMenu
+#define UI_CHANGE_TO_POINTER UI_GLOBALS.pChangeToMenu
+#define UI_EXIT_ACTION UI_GLOBALS.exitAction
+#define UI_TRANSITION_TIMER UI_GLOBALS.transitionTimer
+#define UI_SAVED_LEVEL_HEAP_PTR UI_GLOBALS.pSavedLevelHeapPtr
+#define UI_RESOURCE_LOAD_ACTIVE UI_GLOBALS.resourceLoadActive
+#define UI_PREVIOUS_ACTIVE_POINTER UI_GLOBALS.pPreviousActiveMenu
+#define UI_RETURN_PLANET_ID UI_GLOBALS.returnPlanetId
+#define UI_RETURN_MENU_POINTER UI_GLOBALS.pReturnMenu
+#define UI_RETURN_MENU_INDEX UI_GLOBALS.returnMenuIndex
+#define UI_RESOURCE_POOL_PRIMARY UI_GLOBALS.pResourcePoolPrimary
+#define UI_RESOURCE_POOL_SECONDARY UI_GLOBALS.pResourcePoolSecondary
+#define UI_FRAME_COUNTER UI_GLOBALS.frameCounter
+#define UI_SUPPRESS_EXIT_INPUT UI_GLOBALS.suppressExitInput
+#define UI_MOBYS UI_GLOBALS.uiMobys
+#define UI_RESOURCE_TABLE UI_GLOBALS.resourceTable
 
 typedef enum UiModeFlags {
    UI_FLAG_CENTER_H          = 0x00001,  // center text horizontally (width/2 offset)
@@ -46,37 +67,122 @@ typedef enum UiModeFlags {
    UI_FLAG_BOTTOM_ANCHOR     = 0x10000,  // shift box y-position to bottom of screen
 } UiModeFlags_e;
 
+typedef enum UIMenuIds {
+   UI_MENU_PAUSE_MAIN        = 2,
+   UI_MENU_WEAPONS           = 3,
+   UI_MENU_GADGETS           = 4,
+   UI_MENU_QUICK_SELECT      = 5,
+   UI_MENU_ITEMS             = 6,
+   UI_MENU_HELP              = 7,
+   UI_MENU_OPTIONS           = 8,
+   UI_MENU_GOODIES           = 9,
+   UI_MENU_PLANET_SELECT     = 11,
+   UI_MENU_QUIT_GAME         = 13,
+   UI_MENU_HELPDESK          = 19,
+   UI_MENU_HELP_LOG          = 21,
+   UI_MENU_CONTROLS          = 22,
+   UI_MENU_MOVES             = 23,
+   UI_MENU_HELP_WEAPONS      = 24,
+   UI_MENU_HELP_GADGETS      = 25,
+   UI_MENU_SUBTITLES         = 27,
+   UI_MENU_SUBTITLES_OPTIONS = 28,
+   UI_MENU_CAMERA            = 29,
+   UI_MENU_SAVE              = 30,
+   UI_MENU_LOAD              = 31,
+   UI_MENU_SOUND             = 32,
+   UI_MENU_SKILL_POINTS      = 36,
+   UI_MENU_CHEATS            = 38,
+   UI_MENU_CINEMATICS        = 39,
+   UI_MENU_IN_LEVEL_MOVIES   = 40,
+   UI_MENU_SKETCHBOOK        = 41,
+   UI_MENU_EPILOGUE          = 42,
+   UI_MENU_COMMERCIALS       = 44,
+} UIMenuIds_e;
+
+typedef enum UiMenuElementSlot {
+   UI_MENU_ELEMENT_SLOT_0     = 0,
+   UI_MENU_ELEMENT_SLOT_1     = 1,
+   UI_MENU_ELEMENT_SLOT_2     = 2,
+   UI_MENU_ELEMENT_SLOT_3     = 3,
+   UI_MENU_ELEMENT_SLOT_4     = 4,
+   UI_MENU_ELEMENT_SLOT_5     = 5,
+   UI_MENU_ELEMENT_SLOT_6     = 6,
+   UI_MENU_ELEMENT_SLOT_7     = 7,
+   UI_MENU_ELEMENT_SLOT_8     = 8,
+   UI_MENU_ELEMENT_SLOT_9     = 9,
+   UI_MENU_ELEMENT_SLOT_10    = 10,
+   UI_MENU_ELEMENT_SLOT_11    = 11,
+   UI_MENU_ELEMENT_SLOT_12    = 12,
+   UI_MENU_ELEMENT_SLOT_13    = 13,
+   UI_MENU_ELEMENT_SLOT_COUNT = UI_MENU_MAX_ELEMENTS,
+} UiMenuElementSlot_e;
+
+struct UiElementBase;
+struct UiElementMenuOption;
+struct UiMenu;
+
+// Shared UI records
+
 typedef struct UiResourceTable {
-/* 0x0 */ u32 *resource;
+/* 0x0 */ u32 *pResource;
 /* 0x4 */ u32 flag;
 } UiResourceTable_t;
 
+typedef struct UiFrameTableEntry { // 0x8
+/* 0x0 */ u32 offset;
+/* 0x4 */ u32 size;
+} UiFrameTableEntry_t;
+
+typedef struct UiString { // 0x4
+/* 0x0 */ short flags;
+/* 0x2 */ u16 id;
+} UiString_t;
+
+typedef struct UiSelectValueEntry { // 0x18
+/* 0x00 */ UiString_t labelStringId;
+/* 0x04 */ int *pModifier;
+/* 0x08 */ UiString_t stringId[4];
+} UiSelectValueEntry_t;
+
+typedef struct UiOptionEntry { // 0x0c
+/* 0x00 */ UiString_t labelStringId;
+/* 0x04 */ struct UiMenu *pNextMenu;
+/* 0x08 */ int timeSelected;
+} UiOptionEntry_t;
+
+typedef struct UiMenuOption { // 0x18
+/* 0x00 */ UiString_t labelStringId;
+/* 0x04 */ struct UiMenu *pNextMenu;
+/* 0x08 */ int timeSelected;
+/* 0x0c */ int pad_0c[3];
+} UiMenuOption_t;
+
 typedef struct UiGlobals { // 0x4f0
 /* 0x000 */ int activeIndex;
-/* 0x004 */ void *activeMenu;
-/* 0x008 */ void *changeToMenu;
+/* 0x004 */ void *pActiveMenu;
+/* 0x008 */ void *pChangeToMenu;
 /* 0x00c */ int exitAction;
-/* 0x010 */ void *scratchBufferB;
+/* 0x010 */ void *pScratchBufferB;
 /* 0x014 */ int transitionTimer;
-/* 0x018 */ void *savedLevelHeapPtr;
+/* 0x018 */ void *pSavedLevelHeapPtr;
 /* 0x01c */ char pad_01c[0x14];
 /* 0x030 */ char savedCameraState[0x40];
 /* 0x070 */ char pad_070[0x5b];
 /* 0x0cb */ bool resourceLoadActive;
 /* 0x0cc */ u32 savedMenuAllocCount;
-/* 0x0d0 */ void *previousActiveMenu;
+/* 0x0d0 */ void *pPreviousActiveMenu;
 /* 0x0d4 */ char pad_0d4[0x10];
 /* 0x0e4 */ int returnPlanetId;
 /* 0x0e8 */ float savedCameraDistance;
 /* 0x0ec */ char pad_0ec[0x04];
-/* 0x0f0 */ void *returnMenu;
+/* 0x0f0 */ void *pReturnMenu;
 /* 0x0f4 */ int returnMenuIndex;
 /* 0x0f8 */ char pad_0f8[0x04];
-/* 0x0fc */ void *resourcePoolSmallAlt;
-/* 0x100 */ void *resourcePoolLargeAlt;
-/* 0x104 */ void *scratchBufferA;
-/* 0x108 */ void *resourcePoolPrimary;
-/* 0x10c */ void *resourcePoolSecondary;
+/* 0x0fc */ void *pResourcePoolSmallAlt;
+/* 0x100 */ void *pResourcePoolLargeAlt;
+/* 0x104 */ void *pScratchBufferA;
+/* 0x108 */ void *pResourcePoolPrimary;
+/* 0x10c */ void *pResourcePoolSecondary;
 /* 0x110 */ int frameCounter;
 /* 0x114 */ char pad_114[0x10];
 /* 0x124 */ int suppressExitInput;
@@ -86,61 +192,14 @@ typedef struct UiGlobals { // 0x4f0
 /* 0x4c8 */ UiResourceTable_t resourceTable[5];
 } UiGlobals_t;
 
-#define UI_GLOBALS (*(UiGlobals_t*)UI_GLOBALS_ADDRESS)
-#define UI_ACTIVE_INDEX UI_GLOBALS.activeIndex
-#define UI_ACTIVE_POINTER UI_GLOBALS.activeMenu
-#define UI_CHANGE_TO_POINTER UI_GLOBALS.changeToMenu
-#define UI_EXIT_ACTION UI_GLOBALS.exitAction
-#define UI_TRANSITION_TIMER UI_GLOBALS.transitionTimer
-#define UI_SAVED_LEVEL_HEAP_PTR UI_GLOBALS.savedLevelHeapPtr
-#define UI_RESOURCE_LOAD_ACTIVE UI_GLOBALS.resourceLoadActive
-#define UI_PREVIOUS_ACTIVE_POINTER UI_GLOBALS.previousActiveMenu
-#define UI_RETURN_PLANET_ID UI_GLOBALS.returnPlanetId
-#define UI_RETURN_MENU_POINTER UI_GLOBALS.returnMenu
-#define UI_RETURN_MENU_INDEX UI_GLOBALS.returnMenuIndex
-#define UI_RESOURCE_POOL_PRIMARY UI_GLOBALS.resourcePoolPrimary
-#define UI_RESOURCE_POOL_SECONDARY UI_GLOBALS.resourcePoolSecondary
-#define UI_FRAME_COUNTER UI_GLOBALS.frameCounter
-#define UI_SUPPRESS_EXIT_INPUT UI_GLOBALS.suppressExitInput
-#define UI_MOBYS UI_GLOBALS.uiMobys
-#define UI_RESOURCE_TABLE UI_GLOBALS.resourceTable
+// UI elements
 
-typedef struct FrameTableEntry { // 0x8
-/* 0x0 */ u32 offset;
-/* 0x4 */ u32 size;
-} FrameTableEntry_t;
-
-struct UiString {
-/* 0x0 */ short flags;
-/* 0x2 */ u16 id;
-};
-
-typedef struct UiElementSelect { // 0x18
-/* 0x00 */ struct UiString labelStringId;
-/* 0x04 */ int *pModifier;
-/* 0x08 */ struct UiString stringId[4];
-} UiElementSelect_t;
-
-typedef struct UiElementButton { // 0x18
-/* 0x00 */ struct UiString labelStringId;
-/* 0x04 */ int *pNextMenu;
-/* 0x08 */ int timeSelected;
-} UiElementButton_t;
-
-typedef struct UiHeader { // 0x88 (Pause->Options->Camera)
-/* 0x00 */ int unk_00;
-/* 0x38 */ int *pParent;
-/* 0x3c */ int index;
-/* 0x40 */ void *pChildren[16];
-/* 0x80 */ char pad_80[0x8];
-} UiHeader_t;
-
-typedef struct UiTitle { // 0x58
-/* 0x00 */ void *pHandleExit;
+typedef struct UiElementBase { // 0x30
+/* 0x00 */ void *pUpdate;
 /* 0x04 */ void *pDraw;
-/* 0x08 */ void *pUseResourceTable_False;
-/* 0x0c */ void *func_0c;
-/* 0x10 */ void *func_10;
+/* 0x08 */ void *pInit;
+/* 0x0c */ void *pUninit;
+/* 0x10 */ void *pCallback10;
 /* 0x14 */ Moby *pMoby;
 /* 0x18 */ int w;
 /* 0x1c */ int h;
@@ -148,6 +207,10 @@ typedef struct UiTitle { // 0x58
 /* 0x24 */ int y;
 /* 0x28 */ int unk_28;
 /* 0x2c */ int unk_2c;
+} UiElementBase_t;
+
+typedef struct UiElementText { // 0x58
+/* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
 /* 0x34 */ int stringId;
 /* 0x38 */ int entryStride;
@@ -157,50 +220,27 @@ typedef struct UiTitle { // 0x58
 /* 0x48 */ int currentStringId;
 /* 0x4c */ u32 currentMsgFlags;
 /* 0x50 */ char unk_50[0x8];
-} UiTitle_t;
+} UiElementText_t;
 
-/*
- NOTES:
- Updating UiOptionsMenu_Description->pOptions[i]->labelStringId also updates UiOptionsMenu_Main->button[i].labelStringId
-*/
-
-typedef struct UiOptionsMenu_Description { // 0x70
-/* 0x00 */ void *pHandleInput;
-/* 0x04 */ void *pDraw;
-/* 0x08 */ void *func_08;
-/* 0x0c */ void *func_0c;
-/* 0x10 */ void *func_10;
-/* 0x14 */ Moby *pMoby;
-/* 0x18 */ int w;
-/* 0x1c */ int h;
-/* 0x20 */ int x;
-/* 0x24 */ int y;
-/* 0x28 */ int unk_28;
-/* 0x2c */ int unk_2c;
+typedef struct UiElementList { // 0x50
+/* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
-/* 0x34 */ UiElementSelect_t *pOptions;
+/* 0x34 */ UiSelectValueEntry_t *pOptions;
 /* 0x38 */ int entryStride;
 /* 0x3c */ int scrollOffset;
 /* 0x40 */ int selectedIndex;
 /* 0x44 */ int uptime;
 /* 0x48 */ int currentStringId;
 /* 0x4c */ u32 currentMsgFlags;
-/* 0x50 */ int descriptionStringId[8];
-} UiOptionsMenu_Description_t;
+} UiElementList_t;
 
-typedef struct UiOptionsMenu_Description_2 { // 0x58
-/* 0x00 */ void *pHandleInput;
-/* 0x04 */ void *pDraw;
-/* 0x08 */ void *func_08;
-/* 0x0c */ void *func_0c;
-/* 0x10 */ void *func_10;
-/* 0x14 */ Moby *pMoby;
-/* 0x18 */ int w;
-/* 0x1c */ int h;
-/* 0x20 */ int x;
-/* 0x24 */ int y;
-/* 0x28 */ int unk_28;
-/* 0x2c */ int unk_2c;
+typedef struct UiElementDescriptionList { // 0x70
+/* 0x00 */ UiElementList_t list;
+/* 0x50 */ int descriptionStringId[8];
+} UiElementDescriptionList_t;
+
+typedef struct UiElementDescriptionText { // 0x58
+/* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
 /* 0x34 */ int *pDescriptionStringId;
 /* 0x38 */ int entryStride;
@@ -210,66 +250,253 @@ typedef struct UiOptionsMenu_Description_2 { // 0x58
 /* 0x48 */ int currentStringId;
 /* 0x4c */ u32 currentMsgFlags;
 /* 0x50 */ int pad_50[2];
-} UiOptionsMenu_Description_2_t;
+} UiElementDescriptionText_t;
 
-typedef struct UiOptionsMenu_Main { // 0xc8
-/* 0x00 */ void *pUpdate;
-/* 0x04 */ void *pDraw;
-/* 0x08 */ void *pInit;
-/* 0x0c */ void *pUninit;
-/* 0x10 */ void *func_10;
-/* 0x14 */ Moby *pMoby;
-/* 0x18 */ int w;
-/* 0x1c */ int h;
-/* 0x20 */ int x;
-/* 0x24 */ int y;
-/* 0x28 */ int unk_28;
-/* 0x2c */ int unk_2c;
-/* 0x30 */ FrameTableEntry_t *frameTable;
+typedef struct UiElementResourceHeader { // 0x50
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ UiFrameTableEntry_t *pFrameTable;
 /* 0x34 */ u32 modeFlags;
-/* 0x38 */ UiElementSelect_t *pOptions;
+/* 0x38 */ UiSelectValueEntry_t *pOptions;
 /* 0x3c */ int uptime;
-/* 0x40 */ void *loadHandle;
+/* 0x40 */ void *pLoadHandle;
 /* 0x44 */ int state;            // -1 = idle, 0-6 = load pipeline stage
-/* 0x48 */ void *bufferA;
-/* 0x4c */ void *bufferB;
+/* 0x48 */ void *pBufferA;
+/* 0x4c */ void *pBufferB;
+} UiElementResourceHeader_t;
+
+typedef struct UiElementResource { // 0x68
+/* 0x00 */ UiElementResourceHeader_t header;
 /* 0x50 */ int committedFrameA;
 /* 0x54 */ int committedFrameB;
 /* 0x58 */ int forcedFrame;
 /* 0x5c */ u32 callCount;
 /* 0x60 */ int loadOffsetAdjust;
 /* 0x64 */ int pad_64;
-/* 0x68 */ UiElementButton_t helpDesk;
-/* 0x74 */ UiElementButton_t save;
-/* 0x80 */ UiElementButton_t load;
-/* 0x8c */ UiElementButton_t sound;
-/* 0x98 */ UiElementButton_t camera;
-/* 0xa4 */ UiElementButton_t subtitles;
-/* 0xb0 */ UiElementButton_t quit;
-/* 0xbc */ UiElementButton_t empty;
-} UiOptionsMenu_Main_t;
+} UiElementResource_t;
 
-typedef struct UiSelectExit { // 0x50
-/* 0x00 */ void *pUpdate;
-/* 0x04 */ void *pDraw;
-/* 0x08 */ void *pInit;
-/* 0x0c */ void *pUninit;
-/* 0x10 */ void *func_10;
-/* 0x14 */ Moby *pMoby;
-/* 0x18 */ int w;
-/* 0x1c */ int h;
-/* 0x20 */ int x;
-/* 0x24 */ int y;
-/* 0x28 */ int unk_28;
-/* 0x2c */ int unk_2c;
-/* 0x30 */ FrameTableEntry_t *frameTable;
-/* 0x34 */ u32 modeFlags;
-/* 0x38 */ UiElementSelect_t *pOptions;
-/* 0x3c */ int uptime;
-/* 0x40 */ void *loadHandle;
-/* 0x44 */ int state;            // -1 = idle, 0-6 = load pipeline stage
-/* 0x48 */ void *bufferA;
-/* 0x4c */ void *bufferB;
-} UiSelectExit;
+typedef struct UiElementMenuOption { // 0x50
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ int pad_30[4];
+/* 0x40 */ int state;
+/* 0x44 */ UiMenuOption_t *pOption;
+/* 0x48 */ struct UiElementMenuOption *pPreviousElement;
+/* 0x4c */ struct UiElementMenuOption *pNextElement;
+} UiElementMenuOption_t;
+
+typedef struct UiElementSelectExit { // 0x50
+/* 0x00 */ UiElementResourceHeader_t resource;
+} UiElementSelectExit_t;
+
+// UI menus
+
+typedef struct UiMenu { // 0x88
+/* 0x00 */ int mobyAnimIds[UI_MENU_MAX_ELEMENTS];
+/* 0x38 */ struct UiMenu *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementBase_t *pElements[UI_MENU_MAX_ELEMENTS];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiMenu_t;
+
+typedef struct UiCustomMenu {
+/* 0x000 */ UiMenu_t menu;
+/* 0x088 */ UiMenuOption_t entries[UI_CUSTOM_MENU_MAX_OPTIONS];
+/* 0x1d8 */ UiElementMenuOption_t optionElements[UI_CUSTOM_MENU_MAX_OPTIONS];
+} UiCustomMenu_t;
+
+typedef struct UiCustomTextMenu {
+/* 0x000 */ UiMenu_t menu;
+/* 0x088 */ UiElementText_t title;
+/* 0x0e0 */ UiElementDescriptionText_t body;
+/* 0x138 */ UiElementSelectExit_t selectExit;
+} UiCustomTextMenu_t;
+
+typedef struct UiPauseMenuEntries { // 0xa8
+/* 0x00 */ UiMenuOption_t weapons;
+/* 0x18 */ UiMenuOption_t gadgets;
+/* 0x30 */ UiMenuOption_t quickSelect;
+/* 0x48 */ UiMenuOption_t items;
+/* 0x60 */ UiMenuOption_t help;
+/* 0x78 */ UiMenuOption_t options;
+/* 0x90 */ UiMenuOption_t goodies;
+} UiPauseMenuEntries_t;
+
+typedef struct UiPauseMenu { // 0x360
+/* 0x000 */ UiMenu_t menu;
+/* 0x088 */ UiPauseMenuEntries_t entries;
+/* 0x130 */ UiElementMenuOption_t optionElements[7];
+} UiPauseMenu_t;
+
+typedef struct UiWeaponsMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pInventoryPanel;
+/* 0x4c */ UiElementBase_t *pWeaponList;
+/* 0x50 */ UiElementBase_t *pHelpWeapons;
+/* 0x54 */ UiElementBase_t *pGadgetsTab;
+/* 0x58 */ UiElementBase_t *pDescription;
+/* 0x5c */ UiElementBase_t *pSharedFrame;
+/* 0x60 */ UiElementBase_t *pAmmo;
+/* 0x64 */ UiElementBase_t *pPrice;
+/* 0x68 */ UiElementBase_t *pSlots[5];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiWeaponsMenu_t;
+
+typedef struct UiGadgetsMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pInventoryPanel;
+/* 0x4c */ UiElementBase_t *pGadgetList;
+/* 0x50 */ UiElementBase_t *pSelectedGadget;
+/* 0x54 */ UiElementBase_t *pWeaponTab;
+/* 0x58 */ UiElementBase_t *pHelpGadgets;
+/* 0x5c */ UiElementBase_t *pSharedFrame;
+/* 0x60 */ UiElementBase_t *pDescription;
+/* 0x64 */ UiElementBase_t *pPrice;
+/* 0x68 */ UiElementBase_t *pSlots[5];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiGadgetsMenu_t;
+
+typedef struct UiQuickSelectMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pInventoryPanel;
+/* 0x4c */ UiElementBase_t *pQuickSelectList;
+/* 0x50 */ UiElementBase_t *pSelectedSlot;
+/* 0x54 */ UiElementBase_t *pWeaponsTab;
+/* 0x58 */ UiElementBase_t *pGadgetsTab;
+/* 0x5c */ UiElementBase_t *pSharedFrame;
+/* 0x60 */ UiElementBase_t *pDescription;
+/* 0x64 */ UiElementBase_t *pPrice;
+/* 0x68 */ UiElementBase_t *pSlots[5];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiQuickSelectMenu_t;
+
+typedef struct UiItemsMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pItemList;
+/* 0x4c */ UiElementBase_t *pHandItems;
+/* 0x50 */ UiElementBase_t *pBackPacks;
+/* 0x54 */ UiElementBase_t *pHeadItems;
+/* 0x58 */ UiElementBase_t *pFootItems;
+/* 0x5c */ UiElementBase_t *pCategoryTab;
+/* 0x60 */ UiElementBase_t *pSharedFrame;
+/* 0x64 */ UiElementBase_t *pDescription;
+/* 0x68 */ UiElementBase_t *pSlots[5];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiItemsMenu_t;
+
+typedef struct UiHelpMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementBase_t *pHelpList;
+/* 0x48 */ UiElementText_t *pTitle;
+/* 0x4c */ UiElementBase_t *pDescription;
+/* 0x50 */ UiElementBase_t *pResource;
+/* 0x54 */ UiElementBase_t *pSelectedHelpEntry;
+/* 0x58 */ UiElementBase_t *pFooter;
+/* 0x5c */ UiElementBase_t *pSlots[8];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiHelpMenu_t;
+
+typedef struct UiHelpTopicMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pTopicText;
+/* 0x4c */ UiElementBase_t *pSelectedTopicText;
+/* 0x50 */ UiElementBase_t *pControls;
+/* 0x54 */ UiElementBase_t *pFooter;
+/* 0x58 */ UiElementBase_t *pSlots[9];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiHelpTopicMenu_t;
+
+/*
+ NOTES:
+ Updating description list option labels also updates the matching UiOptionsMenuMain entry labelStringId.
+*/
+
+typedef struct UiOptionsMenuMain { // 0xc8
+/* 0x00 */ UiElementResource_t resource;
+/* 0x68 */ UiOptionEntry_t helpDesk;
+/* 0x74 */ UiOptionEntry_t save;
+/* 0x80 */ UiOptionEntry_t load;
+/* 0x8c */ UiOptionEntry_t sound;
+/* 0x98 */ UiOptionEntry_t camera;
+/* 0xa4 */ UiOptionEntry_t subtitles;
+/* 0xb0 */ UiOptionEntry_t quit;
+/* 0xbc */ UiOptionEntry_t empty;
+} UiOptionsMenuMain_t;
+
+typedef struct UiOptionsMenu { // 0x150
+/* 0x000 */ UiMenu_t menu;
+/* 0x088 */ UiOptionsMenuMain_t main;
+} UiOptionsMenu_t;
+
+typedef struct UiGoodiesMenuEntries { // 0x6c
+/* 0x00 */ UiOptionEntry_t skillPoints;
+/* 0x0c */ UiOptionEntry_t credits;
+/* 0x18 */ UiOptionEntry_t cheats;
+/* 0x24 */ UiOptionEntry_t cinematics;
+/* 0x30 */ UiOptionEntry_t inLevelMovies;
+/* 0x3c */ UiOptionEntry_t sketchbook;
+/* 0x48 */ UiOptionEntry_t epilogue;
+/* 0x54 */ UiOptionEntry_t makingOfVideo;
+/* 0x60 */ UiOptionEntry_t commercials;
+} UiGoodiesMenuEntries_t;
+
+typedef struct UiGoodiesMenu { // 0x118
+/* 0x000 */ UiMenu_t menu;
+/* 0x088 */ UiGoodiesMenuEntries_t entries;
+/* 0x0f4 */ int descriptionStringId[9];
+} UiGoodiesMenu_t;
+
+typedef struct UiPlanetSelectMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementBase_t *pPlanetList;
+/* 0x48 */ UiElementBase_t *pPreviousMap;
+/* 0x4c */ UiElementBase_t *pNextMap;
+/* 0x50 */ UiElementBase_t *pSelectedPlanet;
+/* 0x54 */ UiElementBase_t *pMapPreview;
+/* 0x58 */ UiElementBase_t *pControls;
+/* 0x5c */ UiElementBase_t *pSlots[8];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiPlanetSelectMenu_t;
 
 #endif // _LIBRAC1_UI_H_
