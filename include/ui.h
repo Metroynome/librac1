@@ -190,7 +190,7 @@ typedef struct UiOptionsMenu_Main { // 0xc8
 /* 0xbc */ UielementButton_t empty;
 } UiOptionsMenu_Main_t;
 
-typedef struct UiOptionsMenu_SelectExit { // 0x50
+typedef struct UiSelectExit { // 0x50
 /* 0x00 */ void *pUpdate;
 /* 0x04 */ void *pDraw;
 /* 0x08 */ void *pInit;
@@ -211,6 +211,6 @@ typedef struct UiOptionsMenu_SelectExit { // 0x50
 /* 0x44 */ int state;            // -1 = idle, 0-6 = load pipeline stage
 /* 0x48 */ void *bufferA;
 /* 0x4c */ void *bufferB;
-} UiOptionsMenu_SelectExit;
+} UiSelectExit;
 
 #endif // _LIBRAC1_UI_H_
