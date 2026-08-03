@@ -2,23 +2,28 @@
 #define _LIBRAC1_UI_H_
 
 #include <tamtypes.h>
-#include "tyes.h"
+#include "types.h"
 #include "moby.h"
 
-#define UI_ACTIVE_POINTER (*(u32*)0x001ba174)
-#define UI_CHANGE_TO_POINTER (*(u32*)0x001ba178)
-#define UI_MOBYS (*(Moby**)0x001ba310)
+#ifdef RAC1_NTSCJ
+#define UI_GLOBALS_ADDRESS 0x001ba270
+#elif RAC1_PAL_V200
+#define UI_GLOBALS_ADDRESS 0x001ba470
+#elif RAC1_PAL
+#define UI_GLOBALS_ADDRESS 0x001ba0f0
+#else
+#define UI_GLOBALS_ADDRESS 0x001ba170
+#endif
 
-// Resource TAble Information
-#define UI_RESOURCE_TABLE ((UiResourceTable_t*)0x001ba638)
+// Resource Table Information
 #define UI_RESOURCE_FLAG_LARGE_CLASS 1
 #define UI_RESOURCE_FLAG_IN_USE      2
 #define UI_RESOURCE_FLAG_LOADING     4
 #define UI_RESOURCE_POOL_SMALL_SIZE 0x11800
 #define UI_RESOURCE_POOL_LARGE_SIZE 0x4f000
 
-#define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (FRAME_FLAG_HERO_ANIM_SRC |UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC |UI_FLAG_DISABLED_OPTION |UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
-#define UI_FLAG_MASK_LOCKED_CHECK (FRAME_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
+#define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC |UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC |UI_FLAG_DISABLED_OPTION |UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
+#define UI_FLAG_MASK_LOCKED_CHECK (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
 
 
 typedef enum UiModeFlags {
@@ -45,6 +50,60 @@ typedef struct UiResourceTable {
 /* 0x0 */ u32 *resource;
 /* 0x4 */ u32 flag;
 } UiResourceTable_t;
+
+typedef struct UiGlobals { // 0x4f0
+/* 0x000 */ int activeIndex;
+/* 0x004 */ void *activeMenu;
+/* 0x008 */ void *changeToMenu;
+/* 0x00c */ int exitAction;
+/* 0x010 */ void *scratchBufferB;
+/* 0x014 */ int transitionTimer;
+/* 0x018 */ void *savedLevelHeapPtr;
+/* 0x01c */ char pad_01c[0x14];
+/* 0x030 */ char savedCameraState[0x40];
+/* 0x070 */ char pad_070[0x5b];
+/* 0x0cb */ bool resourceLoadActive;
+/* 0x0cc */ u32 savedMenuAllocCount;
+/* 0x0d0 */ void *previousActiveMenu;
+/* 0x0d4 */ char pad_0d4[0x10];
+/* 0x0e4 */ int returnPlanetId;
+/* 0x0e8 */ float savedCameraDistance;
+/* 0x0ec */ char pad_0ec[0x04];
+/* 0x0f0 */ void *returnMenu;
+/* 0x0f4 */ int returnMenuIndex;
+/* 0x0f8 */ char pad_0f8[0x04];
+/* 0x0fc */ void *resourcePoolSmallAlt;
+/* 0x100 */ void *resourcePoolLargeAlt;
+/* 0x104 */ void *scratchBufferA;
+/* 0x108 */ void *resourcePoolPrimary;
+/* 0x10c */ void *resourcePoolSecondary;
+/* 0x110 */ int frameCounter;
+/* 0x114 */ char pad_114[0x10];
+/* 0x124 */ int suppressExitInput;
+/* 0x128 */ char pad_128[0x78];
+/* 0x1a0 */ Moby *uiMobys[14];
+/* 0x1d8 */ char pad_1d8[0x2f0];
+/* 0x4c8 */ UiResourceTable_t resourceTable[5];
+} UiGlobals_t;
+
+#define UI_GLOBALS (*(UiGlobals_t*)UI_GLOBALS_ADDRESS)
+#define UI_ACTIVE_INDEX UI_GLOBALS.activeIndex
+#define UI_ACTIVE_POINTER UI_GLOBALS.activeMenu
+#define UI_CHANGE_TO_POINTER UI_GLOBALS.changeToMenu
+#define UI_EXIT_ACTION UI_GLOBALS.exitAction
+#define UI_TRANSITION_TIMER UI_GLOBALS.transitionTimer
+#define UI_SAVED_LEVEL_HEAP_PTR UI_GLOBALS.savedLevelHeapPtr
+#define UI_RESOURCE_LOAD_ACTIVE UI_GLOBALS.resourceLoadActive
+#define UI_PREVIOUS_ACTIVE_POINTER UI_GLOBALS.previousActiveMenu
+#define UI_RETURN_PLANET_ID UI_GLOBALS.returnPlanetId
+#define UI_RETURN_MENU_POINTER UI_GLOBALS.returnMenu
+#define UI_RETURN_MENU_INDEX UI_GLOBALS.returnMenuIndex
+#define UI_RESOURCE_POOL_PRIMARY UI_GLOBALS.resourcePoolPrimary
+#define UI_RESOURCE_POOL_SECONDARY UI_GLOBALS.resourcePoolSecondary
+#define UI_FRAME_COUNTER UI_GLOBALS.frameCounter
+#define UI_SUPPRESS_EXIT_INPUT UI_GLOBALS.suppressExitInput
+#define UI_MOBYS UI_GLOBALS.uiMobys
+#define UI_RESOURCE_TABLE UI_GLOBALS.resourceTable
 
 typedef struct FrameTableEntry { // 0x8
 /* 0x0 */ u32 offset;
@@ -180,14 +239,14 @@ typedef struct UiOptionsMenu_Main { // 0xc8
 /* 0x5c */ u32 callCount;
 /* 0x60 */ int loadOffsetAdjust;
 /* 0x64 */ int pad_64;
-/* 0x68 */ UielementButton_t helpDesk;
-/* 0x74 */ UielementButton_t save;
-/* 0x80 */ UielementButton_t load;
-/* 0x8c */ UielementButton_t sound;
-/* 0x98 */ UielementButton_t camera;
-/* 0xa4 */ UielementButton_t subtitles;
-/* 0xb0 */ UielementButton_t quit;
-/* 0xbc */ UielementButton_t empty;
+/* 0x68 */ UiElementButton_t helpDesk;
+/* 0x74 */ UiElementButton_t save;
+/* 0x80 */ UiElementButton_t load;
+/* 0x8c */ UiElementButton_t sound;
+/* 0x98 */ UiElementButton_t camera;
+/* 0xa4 */ UiElementButton_t subtitles;
+/* 0xb0 */ UiElementButton_t quit;
+/* 0xbc */ UiElementButton_t empty;
 } UiOptionsMenu_Main_t;
 
 typedef struct UiSelectExit { // 0x50
