@@ -68,35 +68,45 @@ typedef enum UiModeFlags {
 } UiModeFlags_e;
 
 typedef enum UIMenuIds {
-   UI_MENU_PAUSE_MAIN        = 2,
-   UI_MENU_WEAPONS           = 3,
-   UI_MENU_GADGETS           = 4,
-   UI_MENU_QUICK_SELECT      = 5,
-   UI_MENU_ITEMS             = 6,
-   UI_MENU_HELP              = 7,
-   UI_MENU_OPTIONS           = 8,
-   UI_MENU_GOODIES           = 9,
-   UI_MENU_PLANET_SELECT     = 11,
-   UI_MENU_QUIT_GAME         = 13,
-   UI_MENU_HELPDESK          = 19,
-   UI_MENU_HELP_LOG          = 21,
-   UI_MENU_CONTROLS          = 22,
-   UI_MENU_MOVES             = 23,
-   UI_MENU_HELP_WEAPONS      = 24,
-   UI_MENU_HELP_GADGETS      = 25,
-   UI_MENU_SUBTITLES         = 27,
-   UI_MENU_SUBTITLES_OPTIONS = 28,
-   UI_MENU_CAMERA            = 29,
-   UI_MENU_SAVE              = 30,
-   UI_MENU_LOAD              = 31,
-   UI_MENU_SOUND             = 32,
-   UI_MENU_SKILL_POINTS      = 36,
-   UI_MENU_CHEATS            = 38,
-   UI_MENU_CINEMATICS        = 39,
-   UI_MENU_IN_LEVEL_MOVIES   = 40,
-   UI_MENU_SKETCHBOOK        = 41,
-   UI_MENU_EPILOGUE          = 42,
-   UI_MENU_COMMERCIALS       = 44,
+   UI_MENU_PAUSE_MAIN          = 2,
+   UI_MENU_WEAPONS             = 3,
+   UI_MENU_GADGETS             = 4,
+   UI_MENU_QUICK_SELECT        = 5,
+   UI_MENU_ITEMS               = 6,
+   UI_MENU_HELP                = 7,
+   UI_MENU_OPTIONS             = 8,
+   UI_MENU_GOODIES             = 9,
+   UI_MENU_PLANET_SELECT       = 11,
+   UI_MENU_PLANET_INFO         = 12, // 0x001b3bf8, opened from planet select
+   UI_MENU_QUIT_GAME           = 13,
+   UI_MENU_VENDOR              = 15, // 0x001b6508, special activeIndex 0x0f entry
+   UI_MENU_VENDOR_CONFIRM      = 16, // 0x001b6878, child of vendor menu
+   UI_MENU_HELPDESK            = 19,
+   UI_MENU_HELP_LOG            = 21,
+   UI_MENU_CONTROLS            = 22,
+   UI_MENU_MOVES               = 23,
+   UI_MENU_HELP_WEAPONS        = 24,
+   UI_MENU_HELP_GADGETS        = 25,
+   UI_MENU_SAVE_LOAD_CONFIRM   = 26, // 0x001b6af8, 0x001b93b8, 0x001b9518
+   UI_MENU_SUBTITLES           = 27,
+   UI_MENU_SUBTITLES_OPTIONS   = 28,
+   UI_MENU_CAMERA              = 29,
+   UI_MENU_SAVE                = 30,
+   UI_MENU_LOAD                = 31, // extra records at 0x001b9180 and 0x001b9208
+   UI_MENU_SOUND               = 32, // extra record at 0x001b8e38
+   UI_MENU_UNKNOWN_34          = 34, // records at 0x001b7670 and 0x001b9440
+   UI_MENU_SKILL_POINTS        = 36,
+   UI_MENU_CREDITS             = 37, // records at 0x001b6f30 and 0x001b6fb8
+   UI_MENU_CHEATS              = 38,
+   UI_MENU_CINEMATICS          = 39,
+   UI_MENU_IN_LEVEL_MOVIES     = 40,
+   UI_MENU_SKETCHBOOK          = 41,
+   UI_MENU_EPILOGUE            = 42,
+   UI_MENU_COMMERCIALS         = 44,
+   UI_MENU_UNKNOWN_46          = 46, // 0x001b8b48, special activeIndex 0x2d entry
+   UI_MENU_UNKNOWN_47          = 47, // 0x001b8d08, child of menu 46
+   UI_MENU_UNKNOWN_48          = 48, // 0x001b8ec0, child of menu 47
+   UI_MENU_UNKNOWN_49          = 49, // 0x001b9038, child of menu 47
 } UIMenuIds_e;
 
 typedef enum UiMenuElementSlot {
@@ -123,33 +133,43 @@ struct UiMenu;
 
 // Shared UI records
 
+// Tracks a resource pool slot used by frame/image-backed UI elements.
+// The game maintains five slots in UiGlobals.resourceTable.
 typedef struct UiResourceTable {
 /* 0x0 */ u32 *pResource;
 /* 0x4 */ u32 flag;
 } UiResourceTable_t;
 
+// Offset/size pair for one frame inside a loaded UI image resource.
 typedef struct UiFrameTableEntry { // 0x8
 /* 0x0 */ u32 offset;
 /* 0x4 */ u32 size;
 } UiFrameTableEntry_t;
 
+// Message string reference. flags are consumed by the UI text drawing path,
+// id is the msg_string id.
 typedef struct UiString { // 0x4
 /* 0x0 */ short flags;
 /* 0x2 */ u16 id;
 } UiString_t;
 
+// Toggle/select row: label plus up to four value strings selected by *pModifier.
+// Used by HelpDesk, Sound, Camera, Subtitles, and similar option pages.
 typedef struct UiSelectValueEntry { // 0x18
 /* 0x00 */ UiString_t labelStringId;
 /* 0x04 */ int *pModifier;
 /* 0x08 */ UiString_t stringId[4];
 } UiSelectValueEntry_t;
 
+// Compact menu row used by generic lists and Select/Exit footers.
+// pNextMenu may be NULL for command-only rows.
 typedef struct UiOptionEntry { // 0x0c
 /* 0x00 */ UiString_t labelStringId;
 /* 0x04 */ struct UiMenu *pNextMenu;
 /* 0x08 */ int timeSelected;
 } UiOptionEntry_t;
 
+// Pause-menu row. Same leading fields as UiOptionEntry, with extra per-row state.
 typedef struct UiMenuOption { // 0x18
 /* 0x00 */ UiString_t labelStringId;
 /* 0x04 */ struct UiMenu *pNextMenu;
@@ -157,6 +177,8 @@ typedef struct UiMenuOption { // 0x18
 /* 0x0c */ int pad_0c[3];
 } UiMenuOption_t;
 
+// Global UI state block. Menu transitions are staged by writing pChangeToMenu,
+// then UiMenu_Open/Update promotes it to pActiveMenu and activeIndex.
 typedef struct UiGlobals { // 0x4f0
 /* 0x000 */ int activeIndex;
 /* 0x004 */ void *pActiveMenu;
@@ -194,6 +216,8 @@ typedef struct UiGlobals { // 0x4f0
 
 // UI elements
 
+// Common element header. All menu element records start with this callback table,
+// owning moby pointer, dimensions, and screen position.
 typedef struct UiElementBase { // 0x30
 /* 0x00 */ void *pUpdate;
 /* 0x04 */ void *pDraw;
@@ -209,6 +233,8 @@ typedef struct UiElementBase { // 0x30
 /* 0x2c */ int unk_2c;
 } UiElementBase_t;
 
+// Draws one text label. The source string can be a fixed stringId or derived
+// from menu/counter state based on modeFlags.
 typedef struct UiElementText { // 0x58
 /* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
@@ -222,23 +248,67 @@ typedef struct UiElementText { // 0x58
 /* 0x50 */ char unk_50[0x8];
 } UiElementText_t;
 
+// Vertical option list. pPreviousElement/pNextElement are focus links used when
+// moving out of the list rather than neighboring entries inside pEntries.
 typedef struct UiElementList { // 0x50
 /* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
-/* 0x34 */ UiSelectValueEntry_t *pOptions;
-/* 0x38 */ int entryStride;
-/* 0x3c */ int scrollOffset;
+/* 0x34 */ UiOptionEntry_t *pEntries;
+/* 0x38 */ UiElementBase_t *pPreviousElement;
+/* 0x3c */ UiElementBase_t *pNextElement;
 /* 0x40 */ int selectedIndex;
-/* 0x44 */ int uptime;
-/* 0x48 */ int currentStringId;
-/* 0x4c */ u32 currentMsgFlags;
+/* 0x44 */ int pad_44[3];
 } UiElementList_t;
 
+// Option list with a parallel description string table indexed by selectedIndex.
 typedef struct UiElementDescriptionList { // 0x70
 /* 0x00 */ UiElementList_t list;
 /* 0x50 */ int descriptionStringId[8];
 } UiElementDescriptionList_t;
 
+// Inventory/grid cell descriptor used by Weapons, Gadgets, and Quick Select.
+typedef struct UiElementGridEntry { // 0x0a
+/* 0x00 */ u16 frameId;
+/* 0x02 */ u16 frameState;
+/* 0x04 */ u16 value;
+/* 0x06 */ u16 stringId;
+/* 0x08 */ u16 altStringId;
+} UiElementGridEntry_t;
+
+// Two-dimensional selectable grid. Direction pointers are fallback focus targets
+// when navigation leaves the grid bounds.
+typedef struct UiElementGrid { // 0x5c
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ float columnSpacing;
+/* 0x38 */ float rowSpacing;
+/* 0x3c */ int selectedIndex;
+/* 0x40 */ int rowCount;
+/* 0x44 */ int columnCount;
+/* 0x48 */ UiElementGridEntry_t *pEntries;
+/* 0x4c */ UiElementBase_t *pUpElement;
+/* 0x50 */ UiElementBase_t *pDownElement;
+/* 0x54 */ UiElementBase_t *pLeftElement;
+/* 0x58 */ UiElementBase_t *pRightElement;
+} UiElementGrid_t;
+
+// Planet selector input/render element used by the galaxy map menus.
+typedef struct UiElementPlanetSelect { // 0x68
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 selectedPlanetId;
+/* 0x34 */ u32 modeFlags;
+/* 0x38 */ int pad_38[12];
+} UiElementPlanetSelect_t;
+
+// Planet preview/map frame element. The internals past the common header still
+// need a dedicated pass before they should be edited directly.
+typedef struct UiElementPlanetPreview { // 0x68
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ int pad_30[14];
+} UiElementPlanetPreview_t;
+
+// Text block whose string id is read through pDescriptionStringId, usually from
+// the currently selected list/grid entry.
 typedef struct UiElementDescriptionText { // 0x58
 /* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
@@ -252,43 +322,121 @@ typedef struct UiElementDescriptionText { // 0x58
 /* 0x50 */ int pad_50[2];
 } UiElementDescriptionText_t;
 
-typedef struct UiElementResourceHeader { // 0x50
+// Image/frame-backed element header. The state field drives the resource load
+// pipeline; use -1 for idle and 0-6 for the loader's staged work.
+typedef struct UiElementFrameBase { // 0x50
 /* 0x00 */ UiElementBase_t base;
 /* 0x30 */ UiFrameTableEntry_t *pFrameTable;
 /* 0x34 */ u32 modeFlags;
-/* 0x38 */ UiSelectValueEntry_t *pOptions;
-/* 0x3c */ int uptime;
-/* 0x40 */ void *pLoadHandle;
+/* 0x38 */ int frameWidth;
+/* 0x3c */ int frameHeight;
+/* 0x40 */ int *pFrameIndex;
 /* 0x44 */ int state;            // -1 = idle, 0-6 = load pipeline stage
 /* 0x48 */ void *pBufferA;
 /* 0x4c */ void *pBufferB;
-} UiElementResourceHeader_t;
+} UiElementFrameBase_t;
 
-typedef struct UiElementResource { // 0x68
-/* 0x00 */ UiElementResourceHeader_t header;
+// Animated/static UI frame element. forcedFrame overrides the selected frame
+// when non-negative; committedFrameA/B are the loaded/rendered frame state.
+typedef struct UiElementFrame { // 0x68
+/* 0x00 */ UiElementFrameBase_t header;
 /* 0x50 */ int committedFrameA;
 /* 0x54 */ int committedFrameB;
 /* 0x58 */ int forcedFrame;
 /* 0x5c */ u32 callCount;
 /* 0x60 */ int loadOffsetAdjust;
 /* 0x64 */ int pad_64;
-} UiElementResource_t;
+} UiElementFrame_t;
 
+// Pause main-menu option element bound to one UiMenuOption row.
 typedef struct UiElementMenuOption { // 0x50
 /* 0x00 */ UiElementBase_t base;
-/* 0x30 */ int pad_30[4];
-/* 0x40 */ int state;
-/* 0x44 */ UiMenuOption_t *pOption;
-/* 0x48 */ struct UiElementMenuOption *pPreviousElement;
-/* 0x4c */ struct UiElementMenuOption *pNextElement;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ UiMenuOption_t *pOption;
+/* 0x38 */ struct UiElementMenuOption *pPreviousElement;
+/* 0x3c */ struct UiElementMenuOption *pNextElement;
+/* 0x40 */ int selectedIndex;
+/* 0x44 */ int pad_44[3];
 } UiElementMenuOption_t;
 
+// Footer control row. Same layout is used for Select/Exit and Toggle/Exit;
+// only the strings in pEntries change.
 typedef struct UiElementSelectExit { // 0x50
-/* 0x00 */ UiElementResourceHeader_t resource;
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ UiOptionEntry_t *pEntries;
+/* 0x38 */ UiElementBase_t *pPreviousElement;
+/* 0x3c */ UiElementBase_t *pNextElement;
+/* 0x40 */ int selectedIndex;
+/* 0x44 */ int pad_44[3];
 } UiElementSelectExit_t;
+
+// Empty placeholder element. The stock menus use one shared zeroed element in
+// unused/background slots that still need a valid child pointer.
+typedef struct UiElementEmpty { // 0x30
+/* 0x00 */ UiElementBase_t base;
+} UiElementEmpty_t;
+
+// Compact options selector with value strings chosen through UiSelectValueEntry.
+typedef struct UiElementToggleList { // 0x40
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ UiSelectValueEntry_t *pOptions; // some callbacks treat this as UiGoodiesToggleEntry_t *
+/* 0x38 */ int selectedIndex;
+/* 0x3c */ int transitionTimer;
+} UiElementToggleList_t;
+
+// Goodies toggle row, used by cheats-style on/off pages.
+typedef struct UiGoodiesToggleEntry { // 0x14
+/* 0x00 */ int labelStringId;
+/* 0x04 */ char *pValue;
+/* 0x08 */ int enabledStringId;
+/* 0x0c */ int disabledStringId;
+/* 0x10 */ u32 flags;
+} UiGoodiesToggleEntry_t;
+
+// Goodies toggle list element. The transition timer is used by the page animation
+// and selection feedback paths.
+typedef struct UiElementGoodiesToggleList { // 0x40
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ UiGoodiesToggleEntry_t *pEntries;
+/* 0x38 */ int selectedIndex;
+/* 0x3c */ int transitionTimer;
+} UiElementGoodiesToggleList_t;
+
+// Memory-card slot selector used by save/load menus. Save, load, and the
+// alternate save/load entry points share this layout with different callbacks.
+typedef struct UiElementSaveLoadList { // 0x50
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ int pad_34;
+/* 0x38 */ int pad_38;
+/* 0x3c */ int pad_3c;
+/* 0x40 */ int selectedIndex;
+/* 0x44 */ int pad_44;
+/* 0x48 */ int slotIndex;
+/* 0x4c */ int state;
+} UiElementSaveLoadList_t;
+
+// 3D moby/item preview element used by equipment/help pages.
+typedef struct UiElementMobyPreview { // 0x50
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ int state;
+/* 0x38 */ float rotation;
+/* 0x3c */ int pad_3c;
+/* 0x40 */ int pad_40;
+/* 0x44 */ Moby *pMobyA;
+/* 0x48 */ Moby *pMobyB;
+/* 0x4c */ int pad_4c;
+} UiElementMobyPreview_t;
 
 // UI menus
 
+// Base menu header. The first 0x38 bytes are moby animation ids for the element
+// slots, followed by parent/id/selection pointers. Menu-specific structs below
+// are typed views over this same 0x88-byte header unless they include inline data.
 typedef struct UiMenu { // 0x88
 /* 0x00 */ int mobyAnimIds[UI_MENU_MAX_ELEMENTS];
 /* 0x38 */ struct UiMenu *pParent;
@@ -300,12 +448,14 @@ typedef struct UiMenu { // 0x88
 /* 0x84 */ int queuedSelectionState;
 } UiMenu_t;
 
+// Helper layout for building a custom option menu in writable memory.
 typedef struct UiCustomMenu {
 /* 0x000 */ UiMenu_t menu;
 /* 0x088 */ UiMenuOption_t entries[UI_CUSTOM_MENU_MAX_OPTIONS];
 /* 0x1d8 */ UiElementMenuOption_t optionElements[UI_CUSTOM_MENU_MAX_OPTIONS];
 } UiCustomMenu_t;
 
+// Helper layout for a custom text/info page with a title, body, and footer.
 typedef struct UiCustomTextMenu {
 /* 0x000 */ UiMenu_t menu;
 /* 0x088 */ UiElementText_t title;
@@ -313,6 +463,7 @@ typedef struct UiCustomTextMenu {
 /* 0x138 */ UiElementSelectExit_t selectExit;
 } UiCustomTextMenu_t;
 
+// Inline rows for the stock pause menu.
 typedef struct UiPauseMenuEntries { // 0xa8
 /* 0x00 */ UiMenuOption_t weapons;
 /* 0x18 */ UiMenuOption_t gadgets;
@@ -336,11 +487,11 @@ typedef struct UiWeaponsMenu { // 0x88, menu header view
 /* 0x40 */ UiElementBase_t *pSelectedElement;
 /* 0x44 */ UiElementText_t *pTitle;
 /* 0x48 */ UiElementBase_t *pInventoryPanel;
-/* 0x4c */ UiElementBase_t *pWeaponList;
+/* 0x4c */ UiElementGrid_t *pWeaponList;
 /* 0x50 */ UiElementBase_t *pHelpWeapons;
 /* 0x54 */ UiElementBase_t *pGadgetsTab;
-/* 0x58 */ UiElementBase_t *pDescription;
-/* 0x5c */ UiElementBase_t *pSharedFrame;
+/* 0x58 */ UiElementDescriptionText_t *pDescription;
+/* 0x5c */ UiElementFrame_t *pSharedFrame;
 /* 0x60 */ UiElementBase_t *pAmmo;
 /* 0x64 */ UiElementBase_t *pPrice;
 /* 0x68 */ UiElementBase_t *pSlots[5];
@@ -356,12 +507,12 @@ typedef struct UiGadgetsMenu { // 0x88, menu header view
 /* 0x40 */ UiElementBase_t *pSelectedElement;
 /* 0x44 */ UiElementText_t *pTitle;
 /* 0x48 */ UiElementBase_t *pInventoryPanel;
-/* 0x4c */ UiElementBase_t *pGadgetList;
+/* 0x4c */ UiElementGrid_t *pGadgetList;
 /* 0x50 */ UiElementBase_t *pSelectedGadget;
 /* 0x54 */ UiElementBase_t *pWeaponTab;
 /* 0x58 */ UiElementBase_t *pHelpGadgets;
-/* 0x5c */ UiElementBase_t *pSharedFrame;
-/* 0x60 */ UiElementBase_t *pDescription;
+/* 0x5c */ UiElementFrame_t *pSharedFrame;
+/* 0x60 */ UiElementDescriptionText_t *pDescription;
 /* 0x64 */ UiElementBase_t *pPrice;
 /* 0x68 */ UiElementBase_t *pSlots[5];
 /* 0x7c */ int elementCountOrState;
@@ -376,12 +527,12 @@ typedef struct UiQuickSelectMenu { // 0x88, menu header view
 /* 0x40 */ UiElementBase_t *pSelectedElement;
 /* 0x44 */ UiElementText_t *pTitle;
 /* 0x48 */ UiElementBase_t *pInventoryPanel;
-/* 0x4c */ UiElementBase_t *pQuickSelectList;
+/* 0x4c */ UiElementGrid_t *pQuickSelectList;
 /* 0x50 */ UiElementBase_t *pSelectedSlot;
 /* 0x54 */ UiElementBase_t *pWeaponsTab;
 /* 0x58 */ UiElementBase_t *pGadgetsTab;
-/* 0x5c */ UiElementBase_t *pSharedFrame;
-/* 0x60 */ UiElementBase_t *pDescription;
+/* 0x5c */ UiElementFrame_t *pSharedFrame;
+/* 0x60 */ UiElementDescriptionText_t *pDescription;
 /* 0x64 */ UiElementBase_t *pPrice;
 /* 0x68 */ UiElementBase_t *pSlots[5];
 /* 0x7c */ int elementCountOrState;
@@ -401,8 +552,8 @@ typedef struct UiItemsMenu { // 0x88, menu header view
 /* 0x54 */ UiElementBase_t *pHeadItems;
 /* 0x58 */ UiElementBase_t *pFootItems;
 /* 0x5c */ UiElementBase_t *pCategoryTab;
-/* 0x60 */ UiElementBase_t *pSharedFrame;
-/* 0x64 */ UiElementBase_t *pDescription;
+/* 0x60 */ UiElementFrame_t *pSharedFrame;
+/* 0x64 */ UiElementDescriptionText_t *pDescription;
 /* 0x68 */ UiElementBase_t *pSlots[5];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -414,12 +565,12 @@ typedef struct UiHelpMenu { // 0x88, menu header view
 /* 0x38 */ UiMenu_t *pParent;
 /* 0x3c */ UIMenuIds_e menuId;
 /* 0x40 */ UiElementBase_t *pSelectedElement;
-/* 0x44 */ UiElementBase_t *pHelpList;
+/* 0x44 */ UiElementList_t *pHelpList;
 /* 0x48 */ UiElementText_t *pTitle;
-/* 0x4c */ UiElementBase_t *pDescription;
-/* 0x50 */ UiElementBase_t *pResource;
-/* 0x54 */ UiElementBase_t *pSelectedHelpEntry;
-/* 0x58 */ UiElementBase_t *pFooter;
+/* 0x4c */ UiElementDescriptionText_t *pDescription;
+/* 0x50 */ UiElementFrame_t *pResource;
+/* 0x54 */ UiElementList_t *pSelectedHelpEntry;
+/* 0x58 */ UiElementSelectExit_t *pFooter;
 /* 0x5c */ UiElementBase_t *pSlots[8];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -434,8 +585,8 @@ typedef struct UiHelpTopicMenu { // 0x88, menu header view
 /* 0x44 */ UiElementText_t *pTitle;
 /* 0x48 */ UiElementBase_t *pTopicText;
 /* 0x4c */ UiElementBase_t *pSelectedTopicText;
-/* 0x50 */ UiElementBase_t *pControls;
-/* 0x54 */ UiElementBase_t *pFooter;
+/* 0x50 */ UiElementSelectExit_t *pControls;
+/* 0x54 */ UiElementSelectExit_t *pFooter;
 /* 0x58 */ UiElementBase_t *pSlots[9];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -447,8 +598,9 @@ typedef struct UiHelpTopicMenu { // 0x88, menu header view
  Updating description list option labels also updates the matching UiOptionsMenuMain entry labelStringId.
 */
 
+// Options menu inline data: one shared frame plus the main option rows.
 typedef struct UiOptionsMenuMain { // 0xc8
-/* 0x00 */ UiElementResource_t resource;
+/* 0x00 */ UiElementFrame_t frame;
 /* 0x68 */ UiOptionEntry_t helpDesk;
 /* 0x74 */ UiOptionEntry_t save;
 /* 0x80 */ UiOptionEntry_t load;
@@ -464,6 +616,7 @@ typedef struct UiOptionsMenu { // 0x150
 /* 0x088 */ UiOptionsMenuMain_t main;
 } UiOptionsMenu_t;
 
+// Inline rows for the Goodies root menu.
 typedef struct UiGoodiesMenuEntries { // 0x6c
 /* 0x00 */ UiOptionEntry_t skillPoints;
 /* 0x0c */ UiOptionEntry_t credits;
@@ -482,17 +635,106 @@ typedef struct UiGoodiesMenu { // 0x118
 /* 0x0f4 */ int descriptionStringId[9];
 } UiGoodiesMenu_t;
 
+// Header view for one-page toggle menus: HelpDesk, Subtitles, Sound, Camera,
+// and related option pages.
+typedef struct UiToggleOptionsMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementEmpty_t *pBackgroundA;
+/* 0x4c */ UiElementEmpty_t *pBackgroundB;
+/* 0x50 */ UiElementToggleList_t *pToggleList;
+/* 0x54 */ UiElementSelectExit_t *pFooter;
+/* 0x58 */ UiElementBase_t *pSlots[9];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiToggleOptionsMenu_t;
+
+// Header view for confirmation/dialog menus, including Quit Game and the
+// save/load confirmation records.
+typedef struct UiConfirmMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pBackgroundA;
+/* 0x4c */ UiElementBase_t *pBackgroundB;
+/* 0x50 */ UiElementBase_t *pBackgroundC;
+/* 0x54 */ UiElementText_t *pSelectedTitle;
+/* 0x58 */ UiElementBase_t *pSlots[9];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiConfirmMenu_t;
+
+// Header view for memory-card save/load slot lists. Extra menu records reuse
+// menu id 31 for alternate load states.
+typedef struct UiSaveLoadMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementSaveLoadList_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementSaveLoadList_t *pSlotList;
+/* 0x4c */ UiElementFrame_t *pDetailFrame;
+/* 0x50 */ UiElementBase_t *pPreview;
+/* 0x54 */ UiElementSelectExit_t *pFooter;
+/* 0x58 */ UiElementBase_t *pSlots[9];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiSaveLoadMenu_t;
+
+// Header view for Goodies list pages such as Skill Points, Credits, Cinematics,
+// Movies, Sketchbook, Epilogue, and Commercials.
+typedef struct UiGoodiesListMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pList;
+/* 0x4c */ UiElementText_t *pSelectedTitle;
+/* 0x50 */ UiElementBase_t *pPreview;
+/* 0x54 */ UiElementBase_t *pFooter;
+/* 0x58 */ UiElementBase_t *pSlots[9];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiGoodiesListMenu_t;
+
+// Header view for Goodies toggle pages such as Cheats.
+typedef struct UiGoodiesToggleMenu { // 0x88, menu header view
+/* 0x00 */ int mobyAnimIds[14];
+/* 0x38 */ UiMenu_t *pParent;
+/* 0x3c */ UIMenuIds_e menuId;
+/* 0x40 */ UiElementBase_t *pSelectedElement;
+/* 0x44 */ UiElementText_t *pTitle;
+/* 0x48 */ UiElementBase_t *pBody;
+/* 0x4c */ UiElementText_t *pSelectedTitle;
+/* 0x50 */ UiElementGoodiesToggleList_t *pToggleList;
+/* 0x54 */ UiElementBase_t *pSlots[10];
+/* 0x7c */ int elementCountOrState;
+/* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
+/* 0x84 */ int queuedSelectionState;
+} UiGoodiesToggleMenu_t;
+
+// Header view for galaxy map selection and planet info menus.
 typedef struct UiPlanetSelectMenu { // 0x88, menu header view
 /* 0x00 */ int mobyAnimIds[14];
 /* 0x38 */ UiMenu_t *pParent;
 /* 0x3c */ UIMenuIds_e menuId;
 /* 0x40 */ UiElementBase_t *pSelectedElement;
-/* 0x44 */ UiElementBase_t *pPlanetList;
-/* 0x48 */ UiElementBase_t *pPreviousMap;
-/* 0x4c */ UiElementBase_t *pNextMap;
-/* 0x50 */ UiElementBase_t *pSelectedPlanet;
-/* 0x54 */ UiElementBase_t *pMapPreview;
-/* 0x58 */ UiElementBase_t *pControls;
+/* 0x44 */ UiElementPlanetSelect_t *pPlanetList;
+/* 0x48 */ UiElementText_t *pPreviousMap;
+/* 0x4c */ UiElementText_t *pNextMap;
+/* 0x50 */ UiElementPlanetSelect_t *pSelectedPlanet;
+/* 0x54 */ UiElementPlanetPreview_t *pMapPreview;
+/* 0x58 */ UiElementSelectExit_t *pControls;
 /* 0x5c */ UiElementBase_t *pSlots[8];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
