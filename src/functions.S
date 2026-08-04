@@ -240,39 +240,10 @@ GetAddressImmediate_exit:
 	.set	pop;
 
 
-#--------------------------------------------------------
-#------------------- STANDARD LIBRARY -------------------
-#--------------------------------------------------------
-#ifdef RAC1_NTSCJ
-FUNCTION(printf, 0x0011c1f8)
-FUNCTION(memcmp, 0x001151b4)
-FUNCTION(memset, 0x001153fc)
-FUNCTION(memcpy, 0x001153d4)
-FUNCTION(strncpy, 0x00116808)
-#else
-FUNCTION(printf, 0x0011c1f8)
-FUNCTION(memcmp, 0x001151b4)
-FUNCTION(memset, 0x001153fc)
-FUNCTION(memcpy, 0x001153d4)
-FUNCTION(strncpy, 0x00116808)
-#endif
 
 #--------------------------------------------------------
-#------------------- MATH ----------- -------------------
+#------------------- SPECIAL WRAPPERS -------------------
 #--------------------------------------------------------
-VARIABLE_FUNCTION(FontSet, vaFontSet)
-
-VARIABLE_FUNCTION(acosf, vaFastAngleCosF)
-VARIABLE_FUNCTION(asinf, vaFastAngleSinF)
-VARIABLE_FUNCTION(atan2f, vaATAN2F)
-
-#--------------------------------------------------------
-#------------------- MATH3D --------- -------------------
-#--------------------------------------------------------
-# Rewritten matrix_to_euler exists
-#VARIABLE_FUNCTION(matrix_to_euler, vaMatirx_To_Euler)
-VARIABLE_FUNCTION(euler_to_matrix, vaEuler_To_Matrix)
-
 // variable address font print function: preserves a0-a3 and t0 length arg.
 #define FONT_PRINT_VARIABLE_FUNCTION(name, variable_address_struct) \
 	.set	push; \
@@ -312,9 +283,46 @@ name: \
 	.end	name; \
 	.size	name,.-name; \
 	.set	pop;
-#--------------------------------------------------------
-#------------------- GRAPHICS ---------------------------
-#--------------------------------------------------------
+
+// Newlib heap wrappers: public malloc/free load _impure_ptr, then tail-call _malloc_r/_free_r.
+#define IMPURE_PTR_ADDR 0x0012f76c
+#define MALLOC_R_ADDR 0x00114920
+#define FREE_R_ADDR 0x00113b70
+
+	.set	push;
+	.set	noreorder;
+	.section	.text.malloc,"ax",@progbits;
+	.align 2;
+	.globl	malloc;
+	.type	malloc,@function;
+	.ent	malloc,0;
+malloc:
+	move $a1, $a0;
+	lui $a0, %hi(IMPURE_PTR_ADDR);
+	lw $a0, %lo(IMPURE_PTR_ADDR)($a0);
+	j MALLOC_R_ADDR;
+	nop;
+	.end	malloc;
+	.size	malloc,.-malloc;
+	.set	pop;
+
+	.set	push;
+	.set	noreorder;
+	.section	.text.free,"ax",@progbits;
+	.align 2;
+	.globl	free;
+	.type	free,@function;
+	.ent	free,0;
+free:
+	move $a1, $a0;
+	lui $a0, %hi(IMPURE_PTR_ADDR);
+	lw $a0, %lo(IMPURE_PTR_ADDR)($a0);
+	j FREE_R_ADDR;
+	nop;
+	.end	free;
+	.size	free,.-free;
+	.set	pop;
+
 	.set	push;
 	.set	noreorder;
 	.section	.text.FontPrint,"ax",@progbits;
@@ -392,11 +400,70 @@ FontPrintWindow_exit:
 	.end	FontPrintWindow;
 	.size	FontPrintWindow,.-FontPrintWindow;
 	.set	pop;
+
+#--------------------------------------------------------
+#------------------- STANDARD LIBRARY -------------------
+#--------------------------------------------------------
+#ifdef RAC1_NTSCJ
+FUNCTION(printf, 0x0011c1f8)
+FUNCTION(memcmp, 0x001151b4)
+FUNCTION(memset, 0x001153fc)
+FUNCTION(memcpy, 0x001153d4)
+FUNCTION(strncpy, 0x00116808)
+#else
+FUNCTION(printf, 0x0011c1f8)
+FUNCTION(memcmp, 0x001151b4)
+FUNCTION(memset, 0x001153fc)
+FUNCTION(memcpy, 0x001153d4)
+FUNCTION(strncpy, 0x00116808)
+#endif
+
+#--------------------------------------------------------
+#------------------- MATH ----------- -------------------
+#--------------------------------------------------------
+VARIABLE_FUNCTION(FontSet, vaFontSet)
+
+VARIABLE_FUNCTION(acosf, vaFastAngleCosF)
+VARIABLE_FUNCTION(asinf, vaFastAngleSinF)
+VARIABLE_FUNCTION(atan2f, vaATAN2F)
+
+#--------------------------------------------------------
+#------------------- MATH3D --------- -------------------
+#--------------------------------------------------------
+# Rewritten matrix_to_euler exists
+#VARIABLE_FUNCTION(matrix_to_euler, vaMatirx_To_Euler)
+VARIABLE_FUNCTION(euler_to_matrix, vaEuler_To_Matrix)
+
+#--------------------------------------------------------
+#------------------- GRAPHICS ---------------------------
+#--------------------------------------------------------
 FONT_PRINT_VARIABLE_FUNCTION(FontPrintLarge, vaFontPrintLarge)
 FONT_PRINT_VARIABLE_FUNCTION(FontPrintSmall, vaFontPrintSmall)
 FONT_PRINT_VARIABLE_FUNCTION(FontPrintCenter, vaFontPrintCenter)
 FONT_PRINT_VARIABLE_FUNCTION(FontPrintCenterSmall, vaFontPrintCenterSmall)
 FONT_PRINT_VARIABLE_FUNCTION(FontPrintCenterLarge, vaFontPrintCenterLarge)
+
+#--------------------------------------------------------
+#------------------- MOBY --------------------------------
+#--------------------------------------------------------
+VARIABLE_FUNCTION(mobySpawn, vaMobySpawn)
+VARIABLE_FUNCTION(mobyDestroy, vaMobyDestroy)
+VARIABLE_FUNCTION(mobySetAnimation, vaMobySetAnimation)
+VARIABLE_FUNCTION(mobyPlaySoundByIndex, vaMobyPlaySoundByIndex)
+#--------------------------------------------------------
+#------------------- UI ---------------------------------
+#--------------------------------------------------------
+VARIABLE_FUNCTION(uiVTableHandleExit, vaUiVTable_HandleExit)
+VARIABLE_FUNCTION(uiVTableDraw, vaUiVTable_Draw)
+VARIABLE_FUNCTION(uiElementSelectDrawList, vaUiElementSelect_DrawList)
+VARIABLE_FUNCTION(uiElementSelectDrawWindowList, vaUiElementSelect_DrawWindowList)
+VARIABLE_FUNCTION(uiResourceElementInit, vaUiResourceElement_Init)
+VARIABLE_FUNCTION(uiResourceElementUpdate, vaUiResourceElement_Update)
+VARIABLE_FUNCTION(uiVTableDrawTexture, vaUiVTable_DrawTexture)
+VARIABLE_FUNCTION(uiVTableOptionsInit, vaUiVTable_OptionsInit)
+VARIABLE_FUNCTION(uiVTableOptionsMenuShutdown, vaUiVTable_OptionsMenuShutdown)
+VARIABLE_FUNCTION(uiVTableUpdateState, vaUiVTable_UpdateState)
+
 #--------------------------------------------------------
 #------------------- CAMERA --------- -------------------
 #--------------------------------------------------------

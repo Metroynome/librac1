@@ -893,4 +893,9 @@ typedef struct M1138_MenuItem_Pvar {
 } M1138_MenuItem_Pvar_t;
 
 
+Moby *mobySpawn(int oClass);
+void mobyDestroy(Moby *moby);
+void mobySetAnimation(Moby *moby, int animSeqId, int frame);
+int mobyPlaySoundByIndex(int soundIndex, u8 flags, Moby *sourceMoby);
+int mobyPlaySound(Moby *moby, int soundIndex, u8 flags);
 #endif

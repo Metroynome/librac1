@@ -24,6 +24,7 @@
 #define UI_RESOURCE_POOL_LARGE_SIZE 0x4f000
 #define UI_MENU_MAX_ELEMENTS 14
 #define UI_CUSTOM_MENU_MAX_OPTIONS UI_MENU_MAX_ELEMENTS
+#define UI_CUSTOM_TEXT_DEFAULT_COLOR 0x80808080
 
 #define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC | UI_FLAG_DISABLED_OPTION | UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
 #define UI_FLAG_MASK_LOCKED_CHECK (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
@@ -161,7 +162,7 @@ typedef struct UiSelectValueEntry { // 0x18
 /* 0x08 */ UiString_t stringId[4];
 } UiSelectValueEntry_t;
 
-// Compact menu row used by generic lists and Select/Exit footers.
+// Compact menu row used by generic lists and footer controls.
 // pNextMenu may be NULL for command-only rows.
 typedef struct UiOptionEntry { // 0x0c
 /* 0x00 */ UiString_t labelStringId;
@@ -248,6 +249,16 @@ typedef struct UiElementText { // 0x58
 /* 0x50 */ char unk_50[0x8];
 } UiElementText_t;
 
+// Custom literal text label. Uses pText directly instead of looking up a RAC1
+// msg_string id through the stock UI text path.
+typedef struct UiElementTextCustom { // 0x40
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ const char *pText;
+/* 0x38 */ u32 color;
+/* 0x3c */ int pad_3c;
+} UiElementTextCustom_t;
+
 // Vertical option list. pPreviousElement/pNextElement are focus links used when
 // moving out of the list rather than neighboring entries inside pEntries.
 typedef struct UiElementList { // 0x50
@@ -322,6 +333,16 @@ typedef struct UiElementDescriptionText { // 0x58
 /* 0x50 */ int pad_50[2];
 } UiElementDescriptionText_t;
 
+// Custom literal description block. Same draw behavior as UiElementTextCustom,
+// kept separate so menu layouts can name title/body/footer fields clearly.
+typedef struct UiElementDescriptionCustom { // 0x40
+/* 0x00 */ UiElementBase_t base;
+/* 0x30 */ u32 modeFlags;
+/* 0x34 */ const char *pText;
+/* 0x38 */ u32 color;
+/* 0x3c */ int pad_3c;
+} UiElementDescriptionCustom_t;
+
 // Image/frame-backed element header. The state field drives the resource load
 // pipeline; use -1 for idle and 0-6 for the loader's staged work.
 typedef struct UiElementFrameBase { // 0x50
@@ -361,7 +382,7 @@ typedef struct UiElementMenuOption { // 0x50
 
 // Footer control row. Same layout is used for Select/Exit and Toggle/Exit;
 // only the strings in pEntries change.
-typedef struct UiElementSelectExit { // 0x50
+typedef struct UiElementFooter { // 0x50
 /* 0x00 */ UiElementBase_t base;
 /* 0x30 */ u32 modeFlags;
 /* 0x34 */ UiOptionEntry_t *pEntries;
@@ -369,7 +390,7 @@ typedef struct UiElementSelectExit { // 0x50
 /* 0x3c */ UiElementBase_t *pNextElement;
 /* 0x40 */ int selectedIndex;
 /* 0x44 */ int pad_44[3];
-} UiElementSelectExit_t;
+} UiElementFooter_t;
 
 // Empty placeholder element. The stock menus use one shared zeroed element in
 // unused/background slots that still need a valid child pointer.
@@ -460,7 +481,7 @@ typedef struct UiCustomTextMenu {
 /* 0x000 */ UiMenu_t menu;
 /* 0x088 */ UiElementText_t title;
 /* 0x0e0 */ UiElementDescriptionText_t body;
-/* 0x138 */ UiElementSelectExit_t selectExit;
+/* 0x138 */ UiElementFooter_t footer;
 } UiCustomTextMenu_t;
 
 // Inline rows for the stock pause menu.
@@ -570,7 +591,7 @@ typedef struct UiHelpMenu { // 0x88, menu header view
 /* 0x4c */ UiElementDescriptionText_t *pDescription;
 /* 0x50 */ UiElementFrame_t *pResource;
 /* 0x54 */ UiElementList_t *pSelectedHelpEntry;
-/* 0x58 */ UiElementSelectExit_t *pFooter;
+/* 0x58 */ UiElementFooter_t *pFooter;
 /* 0x5c */ UiElementBase_t *pSlots[8];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -585,8 +606,8 @@ typedef struct UiHelpTopicMenu { // 0x88, menu header view
 /* 0x44 */ UiElementText_t *pTitle;
 /* 0x48 */ UiElementBase_t *pTopicText;
 /* 0x4c */ UiElementBase_t *pSelectedTopicText;
-/* 0x50 */ UiElementSelectExit_t *pControls;
-/* 0x54 */ UiElementSelectExit_t *pFooter;
+/* 0x50 */ UiElementFooter_t *pControls;
+/* 0x54 */ UiElementFooter_t *pFooter;
 /* 0x58 */ UiElementBase_t *pSlots[9];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -646,7 +667,7 @@ typedef struct UiToggleOptionsMenu { // 0x88, menu header view
 /* 0x48 */ UiElementEmpty_t *pBackgroundA;
 /* 0x4c */ UiElementEmpty_t *pBackgroundB;
 /* 0x50 */ UiElementToggleList_t *pToggleList;
-/* 0x54 */ UiElementSelectExit_t *pFooter;
+/* 0x54 */ UiElementFooter_t *pFooter;
 /* 0x58 */ UiElementBase_t *pSlots[9];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -682,7 +703,7 @@ typedef struct UiSaveLoadMenu { // 0x88, menu header view
 /* 0x48 */ UiElementSaveLoadList_t *pSlotList;
 /* 0x4c */ UiElementFrame_t *pDetailFrame;
 /* 0x50 */ UiElementBase_t *pPreview;
-/* 0x54 */ UiElementSelectExit_t *pFooter;
+/* 0x54 */ UiElementFooter_t *pFooter;
 /* 0x58 */ UiElementBase_t *pSlots[9];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
@@ -734,11 +755,49 @@ typedef struct UiPlanetSelectMenu { // 0x88, menu header view
 /* 0x4c */ UiElementText_t *pNextMap;
 /* 0x50 */ UiElementPlanetSelect_t *pSelectedPlanet;
 /* 0x54 */ UiElementPlanetPreview_t *pMapPreview;
-/* 0x58 */ UiElementSelectExit_t *pControls;
+/* 0x58 */ UiElementFooter_t *pControls;
 /* 0x5c */ UiElementBase_t *pSlots[8];
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
 /* 0x84 */ int queuedSelectionState;
 } UiPlanetSelectMenu_t;
 
+// Stock UI callback trampolines. These resolve through VariableAddress_t for the active level/region.
+void uiVTableHandleExit(UiElementBase_t *element);
+u64 uiVTableDraw(UiElementBase_t *element);
+u64 uiElementSelectDrawList(UiElementList_t *element);
+u64 uiElementSelectDrawWindowList(UiElementList_t *element);
+void uiResourceElementInit(UiElementFrameBase_t *element);
+void uiResourceElementUpdate(UiElementFrameBase_t *element);
+u64 uiVTableDrawTexture(UiElementFrame_t *element);
+void uiVTableOptionsInit(UiElementFrameBase_t *element);
+void uiVTableOptionsMenuShutdown(UiElementFrameBase_t *element);
+void uiVTableUpdateState(UiElementFrameBase_t *element);
+// UI frame and element helpers
+
+// Set only the cached screen bounds. uiRenderMenu normally overwrites these from point[0] and point[3].
+void uiFramePvarSetScreenRect(M1138_MenuItem_Pvar_t *frame, int x, int y, int w, int h);
+// Set caller-owned corner points in the same space consumed by uiRenderMenu.
+void uiFramePvarSetCorners2D(M1138_MenuItem_Pvar_t *frame, float x, float y, float z, float w, float h);
+void uiFramePvarSetCorners(M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight);
+void uiFrameMobyAttach(Moby *moby, M1138_MenuItem_Pvar_t *frame);
+void uiFrameMobyUseCustomPoints(Moby *moby, M1138_MenuItem_Pvar_t *frame);
+Moby *uiMenuGetFrameMoby(int slot);
+int uiMenuSetFrameAnim(UiMenu_t *menu, int slot, int animId);
+int uiMenuSetElement(UiMenu_t *menu, int slot, UiElementBase_t *element);
+int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame);
+
+void uiCreateBase(UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight);
+void uiCreateText(UiElementText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, int stringId);
+void uiElementTextCustomDraw(UiElementTextCustom_t *element);
+void uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element);
+void uiCreateTextCustom(UiElementTextCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, const char *pText);
+void uiCreateTitleCustom(UiElementTextCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, const char *pText);
+void uiCreateDescriptionCustom(UiElementDescriptionCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, const char *pText);
+void uiCreateTitle(UiElementText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, int stringId);
+void uiCreateDescription(UiElementDescriptionText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, int *descriptionStringId);
+void uiCreateFrame(UiElementFrame_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiFrameTableEntry_t *frameTable, int frameWidth, int frameHeight, int *frameIndex);
+void uiCreateSelectList(UiElementList_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiOptionEntry_t *entries, UiElementBase_t *previousElement, UiElementBase_t *nextElement, int selectedIndex);
+void uiCreateMenuOption(UiElementMenuOption_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiMenuOption_t *option, UiElementMenuOption_t *previousElement, UiElementMenuOption_t *nextElement, int selectedIndex);
+void uiCreateFooter(UiElementFooter_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiOptionEntry_t *entries, UiElementBase_t *previousElement, UiElementBase_t *nextElement, int selectedIndex);
 #endif // _LIBRAC1_UI_H_
