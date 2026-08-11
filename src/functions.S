@@ -332,35 +332,38 @@ free:
 	.ent	FontPrint,0;
 	.extern vaFontPrint;
 FontPrint:
-		addiu $sp, $sp, -0x60;
-		sq $ra, 0x00($sp);
-		sq $a0, 0x10($sp);
-		sq $a1, 0x20($sp);
-		sq $a2, 0x30($sp);
-		sq $a3, 0x40($sp);
-		sq $t0, 0x50($sp);
-		la $a0, vaFontPrint;
-		la $a1, FontPrint_return;
-		j __LocalGetAddress;
-		nop;
+        addiu $sp, $sp, -0x80;
+        sq $ra, 0x00($sp);
+        sq $a0, 0x10($sp);
+        sq $a1, 0x20($sp);
+        sq $a2, 0x30($sp);
+        sq $a3, 0x40($sp);
+        sq $t0, 0x50($sp);
+        sq $t1, 0x60($sp);
+        sq $t2, 0x70($sp);
+        la $a0, vaFontPrint;
+        la $a1, FontPrint_return;
+        j __LocalGetAddress;
+        nop;
 FontPrint_return:
-		beq $zero, $v0, FontPrint_exit;
-		nop;
-		lq $a3, 0x40($sp);
-		lq $a2, 0x30($sp);
-		lq $a1, 0x20($sp);
-		lq $a0, 0x10($sp);
-		lq $t0, 0x50($sp);
-		jalr $v0;
-		nop;
+        beq $zero, $v0, FontPrint_exit;
+        nop;
+        lq $a3, 0x40($sp);
+        lq $a2, 0x30($sp);
+        lq $a1, 0x20($sp);
+        lq $a0, 0x10($sp);
+        lq $t0, 0x50($sp);
+        lq $t1, 0x60($sp);
+        lq $t2, 0x70($sp);
+        jalr $v0;
+        nop;
 FontPrint_exit:
-		lq $ra, 0x00($sp);
-		jr $ra;
-		addiu $sp, $sp, 0x60;
-	.end	FontPrint;
-	.size	FontPrint,.-FontPrint;
-	.set	pop;
-
+        lq $ra, 0x00($sp);
+        jr $ra;
+        addiu $sp, $sp, 0x80;
+    .end    FontPrint;
+    .size   FontPrint,.-FontPrint;
+    .set    pop;
 	.set	push;
 	.set	noreorder;
 	.section	.text.FontPrintWindow,"ax",@progbits;
@@ -473,3 +476,4 @@ VARIABLE_FUNCTION(cameraSetElevation, vaCam_SetElevation)
 VARIABLE_FUNCTION(cameraSetFollowMode, vaCam_SetFollowMode)
 VARIABLE_FUNCTION(cameraSetFollowSmoothing, vaCam_SetFollowSmoothing)
 VARIABLE_FUNCTION(cameraEnableBlendMode, vaCam_EnableBlendMode)
+

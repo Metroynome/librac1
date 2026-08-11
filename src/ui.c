@@ -1,6 +1,7 @@
 #include <tamtypes.h>
 #include "interop.h"
 #include "math.h"
+#include "string.h"
 #include "graphics.h"
 #include "ui.h"
 
@@ -27,6 +28,8 @@ static void uiDrawCustomText(UiElementBase_t *base, u32 modeFlags, const char *t
     int x;
     int y;
     int length;
+    int font;
+    void *fontTable;
 
     if (!base || !text) {
         return;
@@ -42,30 +45,34 @@ static void uiDrawCustomText(UiElementBase_t *base, u32 modeFlags, const char *t
     }
 
     length = uiTextLength(text);
+    font = FontSet(1);
+    fontTable = (void *)0x001c35d0;
     if (modeFlags & UI_FLAG_CENTER_H) {
         FontPrintCenter(x, y, color, text, length);
     }
     else {
-        FontPrint(x, y, color, text, length);
+        FontPrint(x, y, color, text, length, font, fontTable);
     }
 }
 
-void uiElementTextCustomDraw(UiElementTextCustom_t *element)
+u64 uiElementTextCustomDraw(UiElementTextCustom_t *element)
 {
     if (!element) {
-        return;
+        return 0;
     }
 
     uiDrawCustomText(&element->base, element->modeFlags, element->pText, element->color);
+    return 0;
 }
 
-void uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element)
+u64 uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element)
 {
     if (!element) {
-        return;
+        return 0;
     }
 
     uiDrawCustomText(&element->base, element->modeFlags, element->pText, element->color);
+    return 0;
 }
 VariableAddress_t vaUiVTable_HandleExit = {
 #ifdef RAC1_PAL_V200
@@ -953,6 +960,26 @@ static int uiFrameSlotIsValid(int slot)
     return slot >= 0 && slot < UI_MENU_MAX_ELEMENTS;
 }
 
+static void uiCopyVector(VECTOR output, const VECTOR input)
+{
+    output[0] = input[0];
+    output[1] = input[1];
+    output[2] = input[2];
+    output[3] = input[3];
+}
+
+static float uiVectorDistance3(const VECTOR a, const VECTOR b)
+{
+    float x;
+    float y;
+    float z;
+
+    x = b[0] - a[0];
+    y = b[1] - a[1];
+    z = b[2] - a[2];
+    return sqrtf((x * x) + (y * y) + (z * z));
+}
+
 static void uiFramePvarSetRectFromCorners(M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft)
 {
     int x;
@@ -1032,22 +1059,17 @@ void uiFramePvarSetCorners2D(M1138_MenuItem_Pvar_t *frame, float x, float y, flo
 
 void uiFramePvarSetCorners(M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight)
 {
-    VECTOR width;
-    VECTOR height;
-
     if (!frame) {
         return;
     }
 
-    vector_copy(frame->point[0], (float *)topLeft);
-    vector_copy(frame->point[1], (float *)topRight);
-    vector_copy(frame->point[2], (float *)bottomLeft);
-    vector_copy(frame->point[3], (float *)bottomRight);
+    uiCopyVector(frame->point[0], topLeft);
+    uiCopyVector(frame->point[1], topRight);
+    uiCopyVector(frame->point[2], bottomLeft);
+    uiCopyVector(frame->point[3], bottomRight);
 
-    vector_subtract(width, frame->point[1], frame->point[0]);
-    vector_subtract(height, frame->point[2], frame->point[0]);
-    frame->worldWidth = vector_length(width);
-    frame->worldHeight = vector_length(height);
+    frame->worldWidth = uiVectorDistance3(topLeft, topRight);
+    frame->worldHeight = uiVectorDistance3(topLeft, bottomLeft);
     frame->unk_48 = 0;
     frame->unk_4c = 0;
     uiFramePvarSetRectFromCorners(frame, topLeft, topRight, bottomLeft);
@@ -1131,6 +1153,25 @@ int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M113
     return 1;
 }
 
+void uiMenuInit(UiMenu_t *menu, UiMenu_t *parent, int menuId)
+{
+    if (!menu) {
+        return;
+    }
+
+    memset(menu, 0, sizeof(UiMenu_t));
+    menu->pParent = parent;
+    menu->menuId = menuId;
+}
+
+void uiMenuOpen(UiMenu_t *menu)
+{
+    if (!menu) {
+        return;
+    }
+
+    UI_GLOBALS.pChangeToMenu = menu;
+}
 void uiCreateBase(UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight)
 {
     if (!element || !frame) {
@@ -1142,7 +1183,7 @@ void uiCreateBase(UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame, const 
     element->pDraw = 0;
     element->pInit = 0;
     element->pUninit = 0;
-    element->pCallback10 = 0;
+    element->renderFlags = 0;
     element->pMoby = 0;
     element->unk_28 = 0;
     element->unk_2c = 0;
@@ -1202,6 +1243,7 @@ void uiCreateTextCustom(UiElementTextCustom_t *element, M1138_MenuItem_Pvar_t *f
     uiCreateBase(&element->base, frame, topLeft, topRight, bottomLeft, bottomRight);
     element->base.pUpdate = (void *)uiVTableHandleExit;
     element->base.pDraw = (void *)uiElementTextCustomDraw;
+    element->base.renderFlags = 0;
     element->modeFlags = modeFlags;
     element->pText = pText;
     element->color = UI_CUSTOM_TEXT_DEFAULT_COLOR;
@@ -1222,6 +1264,7 @@ void uiCreateDescriptionCustom(UiElementDescriptionCustom_t *element, M1138_Menu
     uiCreateBase(&element->base, frame, topLeft, topRight, bottomLeft, bottomRight);
     element->base.pUpdate = (void *)uiVTableHandleExit;
     element->base.pDraw = (void *)uiElementDescriptionCustomDraw;
+    element->base.renderFlags = 0;
     element->modeFlags = modeFlags;
     element->pText = pText;
     element->color = UI_CUSTOM_TEXT_DEFAULT_COLOR;
@@ -1299,3 +1342,4 @@ void uiCreateFooter(UiElementFooter_t *element, M1138_MenuItem_Pvar_t *frame, co
     element->pNextElement = nextElement;
     element->selectedIndex = selectedIndex;
 }
+

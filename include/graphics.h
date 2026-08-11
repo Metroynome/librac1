@@ -13,12 +13,18 @@
 #endif
 
 int FontSet(int font);
-int FontPrint(int x, int y, u32 color, const char *string, int length);
+int FontPrint(int x, int y, u32 color, const char *string, int length, int font, void *fontTable);
 int FontPrintLarge(int x, int y, u32 color, const char *string, int length);
 int FontPrintSmall(int x, int y, u32 color, const char *string, int length);
 int FontPrintCenter(int x, int y, u32 color, const char *string, int length);
 int FontPrintCenterSmall(int x, int y, u32 color, const char *string, int length);
 int FontPrintCenterLarge(int x, int y, u32 color, const char *string, int length);
 int FontPrintWindow(void *window, u32 color, const char *string, int length, u32 font, void *fontTable);
+int FontPrintHudBegin(void);
+void FontPrintHudEnd(void);
+int FontPrintSmallHud(int x, int y, u32 color, const char *string, int length);
+int FontPrintSmallSafe(int x, int y, u32 color, const char *string, int length);
 
 #endif // _LIBRAC1_GRAPHICS_H_
+
+

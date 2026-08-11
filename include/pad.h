@@ -53,6 +53,23 @@
 #define PAD_R2              0x0200
 #define PAD_L2              0x0100
 
+#define PAD_REVERSED_L2     0x0001
+#define PAD_REVERSED_R2     0x0002
+#define PAD_REVERSED_L1     0x0004
+#define PAD_REVERSED_R1     0x0008
+#define PAD_REVERSED_TRIANGLE 0x0010
+#define PAD_REVERSED_CIRCLE 0x0020
+#define PAD_REVERSED_CROSS  0x0040
+#define PAD_REVERSED_SQUARE 0x0080
+#define PAD_REVERSED_SELECT 0x0100
+#define PAD_REVERSED_L3     0x0200
+#define PAD_REVERSED_R3     0x0400
+#define PAD_REVERSED_START  0x0800
+#define PAD_REVERSED_UP     0x1000
+#define PAD_REVERSED_RIGHT  0x2000
+#define PAD_REVERSED_DOWN   0x4000
+#define PAD_REVERSED_LEFT   0x8000
+
 typedef struct PAD { // RC1 - 0x39C bytes
     union {
     /* 0x000 */ u128 pad_buf[16];

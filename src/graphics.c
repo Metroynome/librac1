@@ -706,3 +706,415 @@ VariableAddress_t vaFontPrintWindow = {
 #endif
 };
 
+VariableAddress_t vaFontPrintSmallLeft = {
+#ifdef RAC1_PAL_V200
+	.MainMenu = 0x001f6968,
+	.Veldin1 = 0x001fb778,
+	.Novalis = 0x0021d2f8,
+	.Aridia = 0x0020c730,
+	.Kerwan = 0x001f5060,
+	.Eudora = 0x001ee160,
+	.Rilgar = 0x0022a430,
+	.NebulaG34 = 0x00213460,
+	.Umbris = 0x00223530,
+	.Batalia = 0x0020e208,
+	.Gaspar = 0x0021aa30,
+	.Orxon = 0x001eed60,
+	.Pokitaru = 0x0022d060,
+	.Hoven = 0x0021e2b8,
+	.OltanisOrbit = 0x002071e0,
+	.Oltanis = 0x0020ea08,
+	.Quartu = 0x001f4e30,
+	.Kalebo = 0x001f9f60,
+	.VeldinOrbit = 0x001f8860,
+	.Veldin2 = 0x002044e0,
+#elif RAC1_NTSCJ
+	.MainMenu = 0x001f6f68,
+	.Veldin1 = 0x001fbba0,
+	.Novalis = 0x0021d720,
+	.Aridia = 0x0020cb58,
+	.Kerwan = 0x001f5488,
+	.Eudora = 0x001ee608,
+	.Rilgar = 0x0022a858,
+	.NebulaG34 = 0x00213808,
+	.Umbris = 0x00223958,
+	.Batalia = 0x0020e630,
+	.Gaspar = 0x0021aed8,
+	.Orxon = 0x001ef188,
+	.Pokitaru = 0x0022d488,
+	.Hoven = 0x0021e760,
+	.OltanisOrbit = 0x00207608,
+	.Oltanis = 0x0020ee30,
+	.Quartu = 0x001f5258,
+	.Kalebo = 0x001fa408,
+	.VeldinOrbit = 0x001f8c88,
+	.Veldin2 = 0x00204908,
+#elif RAC1_PAL
+	.MainMenu = 0x001f64b8,
+	.Veldin1 = 0x001fb378,
+	.Novalis = 0x0021cef8,
+	.Aridia = 0x0020c330,
+	.Kerwan = 0x001f4c60,
+	.Eudora = 0x001edd60,
+	.Rilgar = 0x0022a030,
+	.NebulaG34 = 0x00212fe0,
+	.Umbris = 0x00223130,
+	.Batalia = 0x0020de08,
+	.Gaspar = 0x0021a6b0,
+	.Orxon = 0x001ee960,
+	.Pokitaru = 0x0022cc60,
+	.Hoven = 0x0021deb8,
+	.OltanisOrbit = 0x00206de0,
+	.Oltanis = 0x0020e608,
+	.Quartu = 0x001f4a30,
+	.Kalebo = 0x001f9b60,
+	.VeldinOrbit = 0x001f8360,
+	.Veldin2 = 0x002040e0,
+#else
+	.MainMenu = 0x001f65b0,
+	.Veldin1 = 0x001fb3f0,
+	.Novalis = 0x0021cff0,
+	.Aridia = 0x0020c428,
+	.Kerwan = 0x001f4d58,
+	.Eudora = 0x001ede58,
+	.Rilgar = 0x0022a0a8,
+	.NebulaG34 = 0x002130d8,
+	.Umbris = 0x00223228,
+	.Batalia = 0x0020df00,
+	.Gaspar = 0x0021a7a8,
+	.Orxon = 0x001eea58,
+	.Pokitaru = 0x0022cd58,
+	.Hoven = 0x0021dfb0,
+	.OltanisOrbit = 0x00206ed8,
+	.Oltanis = 0x0020e680,
+	.Quartu = 0x001f4b28,
+	.Kalebo = 0x001f9c58,
+	.VeldinOrbit = 0x001f8458,
+	.Veldin2 = 0x002041d8,
+#endif
+};
+
+
+VariableAddress_t vaVU1FlipAndExpireTimers = {
+#ifdef RAC1_PAL_V200
+	.MainMenu = 0x001f45d8,
+	.Veldin1 = 0x001f93e8,
+	.Novalis = 0x0021af68,
+	.Aridia = 0x0020a3a0,
+	.Kerwan = 0x001f2cd0,
+	.Eudora = 0x001ebdd0,
+	.Rilgar = 0x002280a0,
+	.NebulaG34 = 0x002110d0,
+	.Umbris = 0x002211a0,
+	.Batalia = 0x0020be78,
+	.Gaspar = 0x002186a0,
+	.Orxon = 0x001ec9d0,
+	.Pokitaru = 0x0022acd0,
+	.Hoven = 0x0021bf28,
+	.OltanisOrbit = 0x00204e50,
+	.Oltanis = 0x0020c678,
+	.Quartu = 0x001f2aa0,
+	.Kalebo = 0x001f7bd0,
+	.VeldinOrbit = 0x001f64d0,
+	.Veldin2 = 0x00202150,
+#elif RAC1_NTSCJ
+	.MainMenu = 0x001f4bd8,
+	.Veldin1 = 0x001f9810,
+	.Novalis = 0x0021b390,
+	.Aridia = 0x0020a7c8,
+	.Kerwan = 0x001f30f8,
+	.Eudora = 0x001ec278,
+	.Rilgar = 0x002284c8,
+	.NebulaG34 = 0x00211478,
+	.Umbris = 0x002215c8,
+	.Batalia = 0x0020c2a0,
+	.Gaspar = 0x00218b48,
+	.Orxon = 0x001ecdf8,
+	.Pokitaru = 0x0022b0f8,
+	.Hoven = 0x0021c3d0,
+	.OltanisOrbit = 0x00205278,
+	.Oltanis = 0x0020caa0,
+	.Quartu = 0x001f2ec8,
+	.Kalebo = 0x001f8078,
+	.VeldinOrbit = 0x001f68f8,
+	.Veldin2 = 0x00202578,
+#elif RAC1_PAL
+	.MainMenu = 0x001f4128,
+	.Veldin1 = 0x001f8fe8,
+	.Novalis = 0x0021ab68,
+	.Aridia = 0x00209fa0,
+	.Kerwan = 0x001f28d0,
+	.Eudora = 0x001eb9d0,
+	.Rilgar = 0x00227ca0,
+	.NebulaG34 = 0x00210c50,
+	.Umbris = 0x00220da0,
+	.Batalia = 0x0020ba78,
+	.Gaspar = 0x00218320,
+	.Orxon = 0x001ec5d0,
+	.Pokitaru = 0x0022a8d0,
+	.Hoven = 0x0021bb28,
+	.OltanisOrbit = 0x00204a50,
+	.Oltanis = 0x0020c278,
+	.Quartu = 0x001f26a0,
+	.Kalebo = 0x001f77d0,
+	.VeldinOrbit = 0x001f5fd0,
+	.Veldin2 = 0x00201d50,
+#else
+	.MainMenu = 0x001f4220,
+	.Veldin1 = 0x001f9060,
+	.Novalis = 0x0021ac60,
+	.Aridia = 0x0020a098,
+	.Kerwan = 0x001f29c8,
+	.Eudora = 0x001ebac8,
+	.Rilgar = 0x00227d18,
+	.NebulaG34 = 0x00210d48,
+	.Umbris = 0x00220e98,
+	.Batalia = 0x0020bb70,
+	.Gaspar = 0x00218418,
+	.Orxon = 0x001ec6c8,
+	.Pokitaru = 0x0022a9c8,
+	.Hoven = 0x0021bc20,
+	.OltanisOrbit = 0x00204b48,
+	.Oltanis = 0x0020c2f0,
+	.Quartu = 0x001f2798,
+	.Kalebo = 0x001f78c8,
+	.VeldinOrbit = 0x001f60c8,
+	.Veldin2 = 0x00201e48,
+#endif
+};
+
+
+VariableAddress_t vaVU1FinalizeFramePacketChain = {
+#ifdef RAC1_PAL_V200
+	.MainMenu = 0x001f46f0,
+	.Veldin1 = 0x001f9500,
+	.Novalis = 0x0021b080,
+	.Aridia = 0x0020a4b8,
+	.Kerwan = 0x001f2de8,
+	.Eudora = 0x001ebee8,
+	.Rilgar = 0x002281b8,
+	.NebulaG34 = 0x002111e8,
+	.Umbris = 0x002212b8,
+	.Batalia = 0x0020bf90,
+	.Gaspar = 0x002187b8,
+	.Orxon = 0x001ecae8,
+	.Pokitaru = 0x0022ade8,
+	.Hoven = 0x0021c040,
+	.OltanisOrbit = 0x00204f68,
+	.Oltanis = 0x0020c790,
+	.Quartu = 0x001f2bb8,
+	.Kalebo = 0x001f7ce8,
+	.VeldinOrbit = 0x001f65e8,
+	.Veldin2 = 0x00202268,
+#elif RAC1_NTSCJ
+	.MainMenu = 0x001f4cf0,
+	.Veldin1 = 0x001f9928,
+	.Novalis = 0x0021b4a8,
+	.Aridia = 0x0020a8e0,
+	.Kerwan = 0x001f3210,
+	.Eudora = 0x001ec390,
+	.Rilgar = 0x002285e0,
+	.NebulaG34 = 0x00211590,
+	.Umbris = 0x002216e0,
+	.Batalia = 0x0020c3b8,
+	.Gaspar = 0x00218c60,
+	.Orxon = 0x001ecf10,
+	.Pokitaru = 0x0022b210,
+	.Hoven = 0x0021c4e8,
+	.OltanisOrbit = 0x00205390,
+	.Oltanis = 0x0020cbb8,
+	.Quartu = 0x001f2fe0,
+	.Kalebo = 0x001f8190,
+	.VeldinOrbit = 0x001f6a10,
+	.Veldin2 = 0x00202690,
+#elif RAC1_PAL
+	.MainMenu = 0x001f4240,
+	.Veldin1 = 0x001f9100,
+	.Novalis = 0x0021ac80,
+	.Aridia = 0x0020a0b8,
+	.Kerwan = 0x001f29e8,
+	.Eudora = 0x001ebae8,
+	.Rilgar = 0x00227db8,
+	.NebulaG34 = 0x00210d68,
+	.Umbris = 0x00220eb8,
+	.Batalia = 0x0020bb90,
+	.Gaspar = 0x00218438,
+	.Orxon = 0x001ec6e8,
+	.Pokitaru = 0x0022a9e8,
+	.Hoven = 0x0021bc40,
+	.OltanisOrbit = 0x00204b68,
+	.Oltanis = 0x0020c390,
+	.Quartu = 0x001f27b8,
+	.Kalebo = 0x001f78e8,
+	.VeldinOrbit = 0x001f60e8,
+	.Veldin2 = 0x00201e68,
+#else
+	.MainMenu = 0x001f4338,
+	.Veldin1 = 0x001f9178,
+	.Novalis = 0x0021ad78,
+	.Aridia = 0x0020a1b0,
+	.Kerwan = 0x001f2ae0,
+	.Eudora = 0x001ebbe0,
+	.Rilgar = 0x00227e30,
+	.NebulaG34 = 0x00210e60,
+	.Umbris = 0x00220fb0,
+	.Batalia = 0x0020bc88,
+	.Gaspar = 0x00218530,
+	.Orxon = 0x001ec7e0,
+	.Pokitaru = 0x0022aae0,
+	.Hoven = 0x0021bd38,
+	.OltanisOrbit = 0x00204c60,
+	.Oltanis = 0x0020c408,
+	.Quartu = 0x001f28b0,
+	.Kalebo = 0x001f79e0,
+	.VeldinOrbit = 0x001f61e0,
+	.Veldin2 = 0x00201f60,
+#endif
+};
+
+
+VariableAddress_t vaVU1AddGSRegister = {
+#ifdef RAC1_PAL_V200
+	.MainMenu = 0x0028e290,
+	.Veldin1 = 0x002930a0,
+	.Novalis = 0x002b4c20,
+	.Aridia = 0x002a4058,
+	.Kerwan = 0x0028c988,
+	.Eudora = 0x00285a88,
+	.Rilgar = 0x002c1d58,
+	.NebulaG34 = 0x002aad88,
+	.Umbris = 0x002bae58,
+	.Batalia = 0x002a5b30,
+	.Gaspar = 0x002b2358,
+	.Orxon = 0x00286688,
+	.Pokitaru = 0x002c4988,
+	.Hoven = 0x002b5be0,
+	.OltanisOrbit = 0x0029eb08,
+	.Oltanis = 0x002a6330,
+	.Quartu = 0x0028c758,
+	.Kalebo = 0x00291888,
+	.VeldinOrbit = 0x00290188,
+	.Veldin2 = 0x0029be08,
+#elif RAC1_NTSCJ
+	.MainMenu = 0x0028e890,
+	.Veldin1 = 0x002934c8,
+	.Novalis = 0x002b5048,
+	.Aridia = 0x002a4480,
+	.Kerwan = 0x0028cdb0,
+	.Eudora = 0x00285f30,
+	.Rilgar = 0x002c2180,
+	.NebulaG34 = 0x002ab130,
+	.Umbris = 0x002bb280,
+	.Batalia = 0x002a5f58,
+	.Gaspar = 0x002b2800,
+	.Orxon = 0x00286ab0,
+	.Pokitaru = 0x002c4db0,
+	.Hoven = 0x002b6088,
+	.OltanisOrbit = 0x0029ef30,
+	.Oltanis = 0x002a6758,
+	.Quartu = 0x0028cb80,
+	.Kalebo = 0x00291d30,
+	.VeldinOrbit = 0x002905b0,
+	.Veldin2 = 0x0029c230,
+#elif RAC1_PAL
+	.MainMenu = 0x0028dde0,
+	.Veldin1 = 0x00292ca0,
+	.Novalis = 0x002b4820,
+	.Aridia = 0x002a3c58,
+	.Kerwan = 0x0028c588,
+	.Eudora = 0x00285688,
+	.Rilgar = 0x002c1958,
+	.NebulaG34 = 0x002aa908,
+	.Umbris = 0x002baa58,
+	.Batalia = 0x002a5730,
+	.Gaspar = 0x002b1fd8,
+	.Orxon = 0x00286288,
+	.Pokitaru = 0x002c4588,
+	.Hoven = 0x002b57e0,
+	.OltanisOrbit = 0x0029e708,
+	.Oltanis = 0x002a5f30,
+	.Quartu = 0x0028c358,
+	.Kalebo = 0x00291488,
+	.VeldinOrbit = 0x0028fc88,
+	.Veldin2 = 0x0029ba08,
+#else
+	.MainMenu = 0x0028ded8,
+	.Veldin1 = 0x00292d18,
+	.Novalis = 0x002b4918,
+	.Aridia = 0x002a3d50,
+	.Kerwan = 0x0028c680,
+	.Eudora = 0x00285780,
+	.Rilgar = 0x002c19d0,
+	.NebulaG34 = 0x002aaa00,
+	.Umbris = 0x002bab50,
+	.Batalia = 0x002a5828,
+	.Gaspar = 0x002b20d0,
+	.Orxon = 0x00286380,
+	.Pokitaru = 0x002c4680,
+	.Hoven = 0x002b58d8,
+	.OltanisOrbit = 0x0029e800,
+	.Oltanis = 0x002a5fa8,
+	.Quartu = 0x0028c450,
+	.Kalebo = 0x00291580,
+	.VeldinOrbit = 0x0028fd80,
+	.Veldin2 = 0x0029bb00,
+#endif
+};
+
+typedef int (*FontPrintSmallDirectFn)(int x, int y, u32 color, const char *string, int length);
+typedef void (*FontVu1FlipFn)(int ui);
+typedef void (*FontVu1FinalizeFn)(void);
+typedef void (*FontVu1AddGsRegisterFn)(int gsRegister, u64 value);
+
+int FontPrintHudBegin(void)
+{
+    FontVu1FlipFn vu1Flip;
+    FontVu1AddGsRegisterFn vu1AddGsRegister;
+
+    vu1AddGsRegister = (FontVu1AddGsRegisterFn)GetAddressImmediate(&vaVU1AddGSRegister);
+    vu1Flip = (FontVu1FlipFn)GetAddressImmediate(&vaVU1FlipAndExpireTimers);
+    if (!vu1AddGsRegister || !vu1Flip) {
+        return 0;
+    }
+
+    vu1AddGsRegister(0x42, 0x44);
+    vu1AddGsRegister(0x47, 0x0b);
+    vu1Flip(0);
+    return 1;
+}
+
+void FontPrintHudEnd(void)
+{
+    FontVu1FinalizeFn vu1Finalize;
+
+    vu1Finalize = (FontVu1FinalizeFn)GetAddressImmediate(&vaVU1FinalizeFramePacketChain);
+    if (!vu1Finalize) {
+        return;
+    }
+
+    vu1Finalize();
+}
+
+int FontPrintSmallHud(int x, int y, u32 color, const char *string, int length)
+{
+    FontPrintSmallDirectFn fontPrintSmall;
+
+    fontPrintSmall = (FontPrintSmallDirectFn)GetAddressImmediate(&vaFontPrintSmallLeft);
+    if (!fontPrintSmall) {
+        return 0;
+    }
+
+    return fontPrintSmall(x, y, color, string, length);
+}
+int FontPrintSmallSafe(int x, int y, u32 color, const char *string, int length)
+{
+    int result;
+
+    if (!FontPrintHudBegin()) {
+        return 0;
+    }
+
+    result = FontPrintSmallHud(x, y, color, string, length);
+    FontPrintHudEnd();
+    return result;
+}

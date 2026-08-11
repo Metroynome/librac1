@@ -25,6 +25,7 @@
 #define UI_MENU_MAX_ELEMENTS 14
 #define UI_CUSTOM_MENU_MAX_OPTIONS UI_MENU_MAX_ELEMENTS
 #define UI_CUSTOM_TEXT_DEFAULT_COLOR 0x80808080
+#define UI_ELEMENT_RENDER_DIRECT 1
 
 #define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC | UI_FLAG_DISABLED_OPTION | UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
 #define UI_FLAG_MASK_LOCKED_CHECK (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
@@ -69,6 +70,7 @@ typedef enum UiModeFlags {
 } UiModeFlags_e;
 
 typedef enum UIMenuIds {
+   UI_MENU_CUSTOM              = 0x100,
    UI_MENU_PAUSE_MAIN          = 2,
    UI_MENU_WEAPONS             = 3,
    UI_MENU_GADGETS             = 4,
@@ -224,7 +226,7 @@ typedef struct UiElementBase { // 0x30
 /* 0x04 */ void *pDraw;
 /* 0x08 */ void *pInit;
 /* 0x0c */ void *pUninit;
-/* 0x10 */ void *pCallback10;
+/* 0x10 */ u32 renderFlags;
 /* 0x14 */ Moby *pMoby;
 /* 0x18 */ int w;
 /* 0x1c */ int h;
@@ -479,9 +481,9 @@ typedef struct UiCustomMenu {
 // Helper layout for a custom text/info page with a title, body, and footer.
 typedef struct UiCustomTextMenu {
 /* 0x000 */ UiMenu_t menu;
-/* 0x088 */ UiElementText_t title;
-/* 0x0e0 */ UiElementDescriptionText_t body;
-/* 0x138 */ UiElementFooter_t footer;
+/* 0x088 */ UiElementTextCustom_t title;
+/* 0x0c8 */ UiElementDescriptionCustom_t body;
+/* 0x108 */ UiElementFooter_t footer;
 } UiCustomTextMenu_t;
 
 // Inline rows for the stock pause menu.
@@ -786,11 +788,13 @@ Moby *uiMenuGetFrameMoby(int slot);
 int uiMenuSetFrameAnim(UiMenu_t *menu, int slot, int animId);
 int uiMenuSetElement(UiMenu_t *menu, int slot, UiElementBase_t *element);
 int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame);
+void uiMenuInit(UiMenu_t *menu, UiMenu_t *parent, int menuId);
+void uiMenuOpen(UiMenu_t *menu);
 
 void uiCreateBase(UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight);
 void uiCreateText(UiElementText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, int stringId);
-void uiElementTextCustomDraw(UiElementTextCustom_t *element);
-void uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element);
+u64 uiElementTextCustomDraw(UiElementTextCustom_t *element);
+u64 uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element);
 void uiCreateTextCustom(UiElementTextCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, const char *pText);
 void uiCreateTitleCustom(UiElementTextCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, const char *pText);
 void uiCreateDescriptionCustom(UiElementDescriptionCustom_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, const char *pText);
