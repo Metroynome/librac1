@@ -407,14 +407,14 @@ FontPrintWindow_exit:
 #--------------------------------------------------------
 #------------------- STANDARD LIBRARY -------------------
 #--------------------------------------------------------
-#ifdef RAC1_NTSCJ
-FUNCTION(printf, 0x0011c1f8)
+#if defined(RAC1_NTSCJ) || defined(RAC1_PAL_V200)
+FUNCTION(printf, 0x0011a6c8)
 FUNCTION(memcmp, 0x001151b4)
 FUNCTION(memset, 0x001153fc)
 FUNCTION(memcpy, 0x001153d4)
 FUNCTION(strncpy, 0x00116808)
 #else
-FUNCTION(printf, 0x0011c1f8)
+FUNCTION(printf, 0x0011a3c8)
 FUNCTION(memcmp, 0x001151b4)
 FUNCTION(memset, 0x001153fc)
 FUNCTION(memcpy, 0x001153d4)
