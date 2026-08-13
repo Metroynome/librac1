@@ -171,19 +171,29 @@ typedef struct UiSelectValueEntry { // 0x18
 /* 0x08 */ UiString_t stringId[4];
 } UiSelectValueEntry_t;
 
-// Compact menu row used by generic lists and footer controls.
-// pNextMenu may be NULL for command-only rows.
+// Compact menu row used by generic lists and footer controls. The stock list
+// callbacks overload this 0x0c record: +0 is the label string id, +2 is row
+// flags/state, +4 is usually the destination menu/row payload, +8 can be a
+// secondary/right-side string id, and +0a is the per-row highlight timer.
 typedef struct UiOptionEntry { // 0x0c
 /* 0x00 */ UiString_t labelStringId;
-/* 0x04 */ struct UiMenu *pNextMenu;
-/* 0x08 */ int timeSelected;
+/* 0x04 */ union { struct UiMenu *pNextMenu; void *pPayload; int value; };
+/* 0x08 */ union {
+    int timeSelected;
+    UiString_t secondaryStringId;
+    struct { u16 valueStringId; short rowTimer; };
+};
 } UiOptionEntry_t;
 
 // Pause-menu row. Same leading fields as UiOptionEntry, with extra per-row state.
 typedef struct UiMenuOption { // 0x18
 /* 0x00 */ UiString_t labelStringId;
-/* 0x04 */ struct UiMenu *pNextMenu;
-/* 0x08 */ int timeSelected;
+/* 0x04 */ union { struct UiMenu *pNextMenu; void *pPayload; int value; };
+/* 0x08 */ union {
+    int timeSelected;
+    UiString_t secondaryStringId;
+    struct { u16 valueStringId; short rowTimer; };
+};
 /* 0x0c */ int pad_0c[3];
 } UiMenuOption_t;
 
@@ -226,8 +236,11 @@ typedef struct UiGlobals { // 0x4f0
 
 // UI elements
 
-// Common element header. All menu element records start with this callback table,
-// owning moby pointer, dimensions, and screen position.
+// Common element header. All menu element records start with this callback table
+// and owning moby pointer. Ghidra confirms uiRenderMenu writes 0x18/0x1c from
+// the projected screen origin and 0x20/0x24 from the projected local window size.
+// Stock text/list draw callbacks use windowW/windowH for FontWindow clipping and
+// row layout.
 typedef struct UiElementBase { // 0x30
 /* 0x00 */ void *pUpdate;
 /* 0x04 */ void *pDraw;
@@ -235,10 +248,10 @@ typedef struct UiElementBase { // 0x30
 /* 0x0c */ void *pUninit;
 /* 0x10 */ u32 renderFlags;
 /* 0x14 */ Moby *pMoby;
-/* 0x18 */ int w;
-/* 0x1c */ int h;
-/* 0x20 */ int x;
-/* 0x24 */ int y;
+/* 0x18 */ union { int screenX; int w; };
+/* 0x1c */ union { int screenY; int h; };
+/* 0x20 */ union { int windowW; int x; };
+/* 0x24 */ union { int windowH; int y; };
 /* 0x28 */ int unk_28;
 /* 0x2c */ int unk_2c;
 } UiElementBase_t;

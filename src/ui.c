@@ -35,13 +35,13 @@ static void uiDrawCustomText(UiElementBase_t *base, u32 modeFlags, const char *t
         return;
     }
 
-    x = base->x;
-    y = base->y;
+    x = base->screenX;
+    y = base->screenY;
     if (modeFlags & UI_FLAG_CENTER_H) {
-        x += base->w / 2;
+        x += base->windowW / 2;
     }
     if (modeFlags & UI_FLAG_CENTER_V) {
-        y += base->h / 2;
+        y += base->windowH / 2;
     }
 
     length = uiTextLength(text);
@@ -1092,10 +1092,10 @@ static void uiElementSetBoundsFromFrame(UiElementBase_t *element, M1138_MenuItem
         return;
     }
 
-    element->x = frame->x;
-    element->y = frame->y;
-    element->w = frame->w;
-    element->h = frame->h;
+    element->screenX = frame->x;
+    element->screenY = frame->y;
+    element->windowW = frame->w;
+    element->windowH = frame->h;
 }
 
 void uiFramePvarSetScreenRect(M1138_MenuItem_Pvar_t *frame, int x, int y, int w, int h)
