@@ -20,6 +20,7 @@ int FontPrintCenter(int x, int y, u32 color, const char *string, int length);
 int FontPrintCenterSmall(int x, int y, u32 color, const char *string, int length);
 int FontPrintCenterLarge(int x, int y, u32 color, const char *string, int length);
 int FontPrintWindow(void *window, u32 color, const char *string, int length, u32 font, void *fontTable);
+int gfxAddRegister(int gsRegister, u64 value);
 int FontPrintHudBegin(void);
 void FontPrintHudEnd(void);
 int FontPrintSmallHud(int x, int y, u32 color, const char *string, int length);

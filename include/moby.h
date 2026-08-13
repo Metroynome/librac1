@@ -890,6 +890,7 @@ typedef struct M1138_MenuItem_Pvar {
 /* 0x54 */ int y;
 /* 0x58 */ int w;
 /* 0x5c */ int h;
+/* 0x60 */ char renderPayload[0x30];
 } M1138_MenuItem_Pvar_t;
 
 

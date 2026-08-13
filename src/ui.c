@@ -62,7 +62,7 @@ u64 uiElementTextCustomDraw(UiElementTextCustom_t *element)
     }
 
     uiDrawCustomText(&element->base, element->modeFlags, element->pText, element->color);
-    return 0;
+    return UI_DRAW_RESULT_EXACT_SIZE;
 }
 
 u64 uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element)
@@ -72,7 +72,7 @@ u64 uiElementDescriptionCustomDraw(UiElementDescriptionCustom_t *element)
     }
 
     uiDrawCustomText(&element->base, element->modeFlags, element->pText, element->color);
-    return 0;
+    return UI_DRAW_RESULT_EXACT_SIZE;
 }
 VariableAddress_t vaUiVTable_HandleExit = {
 #ifdef RAC1_PAL_V200
@@ -426,6 +426,93 @@ VariableAddress_t vaUiElementSelect_DrawWindowList = {
 #endif
 };
 
+VariableAddress_t vaUiVTable_UseResourceTableOff = {
+#ifdef RAC1_PAL_V200
+    .MainMenu = 0x0021dae8,
+    .Veldin1 = 0x0027b6f0,
+    .Novalis = 0x002913d8,
+    .Aridia = 0x0027cb58,
+    .Kerwan = 0x0026a278,
+    .Eudora = 0x0026e950,
+    .Rilgar = 0x002a59a0,
+    .NebulaG34 = 0x0028a450,
+    .Umbris = 0x002a4040,
+    .Batalia = 0x00285d68,
+    .Gaspar = 0x0029a410,
+    .Orxon = 0x0026e520,
+    .Pokitaru = 0x002a0998,
+    .Hoven = 0x002942c8,
+    .OltanisOrbit = 0x00287780,
+    .Oltanis = 0x00283e30,
+    .Quartu = 0x0026b2d8,
+    .Kalebo = 0x00276900,
+    .VeldinOrbit = 0x002757c8,
+    .Veldin2 = 0x0027d5b8,
+#elif RAC1_NTSCJ
+    .MainMenu = 0x0021e948,
+    .Veldin1 = 0x0027c5c0,
+    .Novalis = 0x002922a0,
+    .Aridia = 0x0027da20,
+    .Kerwan = 0x0026b148,
+    .Eudora = 0x0026f8a0,
+    .Rilgar = 0x002a6868,
+    .NebulaG34 = 0x0028b2a0,
+    .Umbris = 0x002a4f10,
+    .Batalia = 0x00286c30,
+    .Gaspar = 0x0029b360,
+    .Orxon = 0x0026f3f0,
+    .Pokitaru = 0x002a1860,
+    .Hoven = 0x00295210,
+    .OltanisOrbit = 0x00288650,
+    .Oltanis = 0x00284cf8,
+    .Quartu = 0x0026c1a8,
+    .Kalebo = 0x00277848,
+    .VeldinOrbit = 0x00276698,
+    .Veldin2 = 0x0027e488,
+#elif RAC1_PAL
+    .MainMenu = 0x0021c5d8,
+    .Veldin1 = 0x0027a0b8,
+    .Novalis = 0x0028fe00,
+    .Aridia = 0x0027b558,
+    .Kerwan = 0x00268cb0,
+    .Eudora = 0x0026d368,
+    .Rilgar = 0x002a43a8,
+    .NebulaG34 = 0x00288e18,
+    .Umbris = 0x002a2a58,
+    .Batalia = 0x00284790,
+    .Gaspar = 0x00298e58,
+    .Orxon = 0x0026cf58,
+    .Pokitaru = 0x0029f3c8,
+    .Hoven = 0x00292ce8,
+    .OltanisOrbit = 0x002861b8,
+    .Oltanis = 0x00282850,
+    .Quartu = 0x00269ce8,
+    .Kalebo = 0x00275318,
+    .VeldinOrbit = 0x002740e8,
+    .Veldin2 = 0x0027bfc8,
+#else
+    .MainMenu = 0x0021cae0,
+    .Veldin1 = 0x0027a728,
+    .Novalis = 0x002904e8,
+    .Aridia = 0x0027bc40,
+    .Kerwan = 0x00269398,
+    .Eudora = 0x0026da58,
+    .Rilgar = 0x002a4a30,
+    .NebulaG34 = 0x00289508,
+    .Umbris = 0x002a3148,
+    .Batalia = 0x00284e78,
+    .Gaspar = 0x00299548,
+    .Orxon = 0x0026d648,
+    .Pokitaru = 0x0029fab0,
+    .Hoven = 0x002933d0,
+    .OltanisOrbit = 0x002868a8,
+    .Oltanis = 0x00282eb8,
+    .Quartu = 0x0026a3d0,
+    .Kalebo = 0x00275a20,
+    .VeldinOrbit = 0x002747d8,
+    .Veldin2 = 0x0027c6b0,
+#endif
+};
 VariableAddress_t vaUiResourceElement_Init = {
 #ifdef RAC1_PAL_V200
     .MainMenu = 0x0021e200,
@@ -1118,6 +1205,20 @@ int uiMenuSetFrameAnim(UiMenu_t *menu, int slot, int animId)
     return 1;
 }
 
+int uiMenuCopyFrameAnims(UiMenu_t *menu, const UiMenu_t *source)
+{
+    int i;
+
+    if (!menu || !source) {
+        return 0;
+    }
+
+    for (i = 0; i < UI_MENU_MAX_ELEMENTS; i++) {
+        menu->mobyAnimIds[i] = source->mobyAnimIds[i];
+    }
+    return 1;
+}
+
 int uiMenuSetElement(UiMenu_t *menu, int slot, UiElementBase_t *element)
 {
     Moby *moby;
@@ -1144,12 +1245,16 @@ int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M113
         return 0;
     }
 
+    if (UI_ACTIVE_POINTER != menu) {
+        return 1;
+    }
+
     moby = uiMenuGetFrameMoby(slot);
     if (!moby) {
         return 0;
     }
 
-    uiFrameMobyUseCustomPoints(moby, frame);
+    uiFrameMobyAttach(moby, frame);
     return 1;
 }
 
@@ -1211,7 +1316,9 @@ void uiCreateText(UiElementText_t *element, M1138_MenuItem_Pvar_t *frame, const 
 
 void uiCreateTitle(UiElementText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, int stringId)
 {
-    uiCreateText(element, frame, topLeft, topRight, bottomLeft, bottomRight, UI_FLAG_CENTER_H | UI_FLAG_CENTER_V, stringId);
+    uiCreateText(element, frame, topLeft, topRight, bottomLeft, bottomRight,
+        UI_FLAG_CENTER_H | UI_FLAG_CENTER_V | UI_FLAG_HERO_ANIM_SRC | UI_FLAG_FONT_STYLE_A, stringId);
+    element->base.pInit = (void *)uiVTableUseResourceTableOff;
 }
 
 void uiCreateDescription(UiElementDescriptionText_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, int *descriptionStringId)
@@ -1342,4 +1449,23 @@ void uiCreateFooter(UiElementFooter_t *element, M1138_MenuItem_Pvar_t *frame, co
     element->pNextElement = nextElement;
     element->selectedIndex = selectedIndex;
 }
+
+
+
+u64 uiVTableUseResourceTableOff(void)
+{
+    u64 (*fn)(void);
+
+    fn = (u64 (*)(void))GetAddress(&vaUiVTable_UseResourceTableOff);
+    if (!fn) {
+        return 0;
+    }
+    return fn();
+}
+
+
+
+
+
+
 

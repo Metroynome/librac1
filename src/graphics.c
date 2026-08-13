@@ -1064,21 +1064,29 @@ VariableAddress_t vaVU1AddGSRegister = {
 typedef int (*FontPrintSmallDirectFn)(int x, int y, u32 color, const char *string, int length);
 typedef void (*FontVu1FlipFn)(int ui);
 typedef void (*FontVu1FinalizeFn)(void);
-typedef void (*FontVu1AddGsRegisterFn)(int gsRegister, u64 value);
+typedef int (*GfxAddRegisterFn)(int gsRegister, u64 value);
+
+int gfxAddRegister(int gsRegister, u64 value)
+{
+    GfxAddRegisterFn fn;
+
+    fn = (GfxAddRegisterFn)GetAddressImmediate(&vaVU1AddGSRegister);
+    if (!fn) {
+        return 0;
+    }
+
+    return fn(gsRegister, value);
+}
 
 int FontPrintHudBegin(void)
 {
     FontVu1FlipFn vu1Flip;
-    FontVu1AddGsRegisterFn vu1AddGsRegister;
 
-    vu1AddGsRegister = (FontVu1AddGsRegisterFn)GetAddressImmediate(&vaVU1AddGSRegister);
     vu1Flip = (FontVu1FlipFn)GetAddressImmediate(&vaVU1FlipAndExpireTimers);
-    if (!vu1AddGsRegister || !vu1Flip) {
+    if (!vu1Flip || !gfxAddRegister(0x42, 0x44) || !gfxAddRegister(0x47, 0x0b)) {
         return 0;
     }
 
-    vu1AddGsRegister(0x42, 0x44);
-    vu1AddGsRegister(0x47, 0x0b);
     vu1Flip(0);
     return 1;
 }

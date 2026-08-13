@@ -26,6 +26,13 @@
 #define UI_CUSTOM_MENU_MAX_OPTIONS UI_MENU_MAX_ELEMENTS
 #define UI_CUSTOM_TEXT_DEFAULT_COLOR 0x80808080
 #define UI_ELEMENT_RENDER_DIRECT 1
+#define UI_ELEMENT_RENDER_SECOND_PASS 2
+
+#define UI_DRAW_RESULT_SKIP_COMPOSITE 1
+#define UI_DRAW_RESULT_EXACT_SIZE 2
+#define UI_DRAW_RESULT_KEEP_ASPECT 4
+#define UI_DRAW_RESULT_CENTER_SOURCE 8
+#define UI_DRAW_RESULT_NO_COMPOSITE_SCALE 0x10
 
 #define UI_FLAG_MASK_HAS_EXPLICIT_SOURCE (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_COUNTER_SRC | UI_FLAG_MENU_LOOKUP_SRC | UI_FLAG_DISABLED_OPTION | UI_FLAG_OPTIONS_TAB_SRC)   // 0x11e4
 #define UI_FLAG_MASK_LOCKED_CHECK (UI_FLAG_HERO_ANIM_SRC | UI_FLAG_LOCKED_OPTION)
@@ -52,7 +59,7 @@
 typedef enum UiModeFlags {
    UI_FLAG_CENTER_H          = 0x00001,  // center text horizontally (width/2 offset)
    UI_FLAG_CENTER_V          = 0x00002,  // center text vertically (height/2 offset)
-   UI_FLAG_HERO_ANIM_SRC     = 0x00004,  // text source: hero animation state (Hero_AnimFramesToStateFrames)
+   UI_FLAG_HERO_ANIM_SRC     = 0x00004,  // stock fixed-string title/text branch with transition timing
    UI_FLAG_FONT_STYLE_A      = 0x00008,  // use font/box style A (uVar14=3, &DAT_001c3d10)
    UI_FLAG_FONT_STYLE_B      = 0x00010,  // use font/box style B (uVar14=2, &DAT_001c3970)
    UI_FLAG_COUNTER_SRC       = 0x00020,  // text source: clamped global counter (iGpffff8184)
@@ -65,7 +72,7 @@ typedef enum UiModeFlags {
    UI_FLAG_OPTIONS_TAB_SRC   = 0x01000,  // text source: focused UiFrame tab/PDA table (+0x3c/+0x48, stride 0xa)
    UI_FLAG_SCROLL_RESET      = 0x02000,  // else-branch of scroll-state check; resets scroll accumulator
    UI_FLAG_LOCKED_OPTION     = 0x04000,  // combined with HERO_ANIM_SRC + msgId==0x523e to force centered "locked" text
-   UI_FLAG_MENU_SRC_ALT      = 0x08000,  // modifies MENU_SRC handling (sets uVar10 from uGpffff8180)
+   UI_FLAG_MENU_SRC_ALT      = 0x08000,  // modifies MENU_SRC handling (sets source flag from uGpffff8180)
    UI_FLAG_BOTTOM_ANCHOR     = 0x10000,  // shift box y-position to bottom of screen
 } UiModeFlags_e;
 
@@ -152,8 +159,8 @@ typedef struct UiFrameTableEntry { // 0x8
 // Message string reference. flags are consumed by the UI text drawing path,
 // id is the msg_string id.
 typedef struct UiString { // 0x4
-/* 0x0 */ short flags;
-/* 0x2 */ u16 id;
+/* 0x0 */ u16 id;
+/* 0x2 */ short flags;
 } UiString_t;
 
 // Toggle/select row: label plus up to four value strings selected by *pModifier.
@@ -770,6 +777,7 @@ u64 uiVTableDraw(UiElementBase_t *element);
 u64 uiElementSelectDrawList(UiElementList_t *element);
 u64 uiElementSelectDrawWindowList(UiElementList_t *element);
 void uiResourceElementInit(UiElementFrameBase_t *element);
+u64 uiVTableUseResourceTableOff(void);
 void uiResourceElementUpdate(UiElementFrameBase_t *element);
 u64 uiVTableDrawTexture(UiElementFrame_t *element);
 void uiVTableOptionsInit(UiElementFrameBase_t *element);
@@ -786,7 +794,9 @@ void uiFrameMobyAttach(Moby *moby, M1138_MenuItem_Pvar_t *frame);
 void uiFrameMobyUseCustomPoints(Moby *moby, M1138_MenuItem_Pvar_t *frame);
 Moby *uiMenuGetFrameMoby(int slot);
 int uiMenuSetFrameAnim(UiMenu_t *menu, int slot, int animId);
+int uiMenuCopyFrameAnims(UiMenu_t *menu, const UiMenu_t *source);
 int uiMenuSetElement(UiMenu_t *menu, int slot, UiElementBase_t *element);
+// Safe to call while preparing a menu. It only retargets the live frame moby when menu is active.
 int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M1138_MenuItem_Pvar_t *frame);
 void uiMenuInit(UiMenu_t *menu, UiMenu_t *parent, int menuId);
 void uiMenuOpen(UiMenu_t *menu);
@@ -805,3 +815,8 @@ void uiCreateSelectList(UiElementList_t *element, M1138_MenuItem_Pvar_t *frame, 
 void uiCreateMenuOption(UiElementMenuOption_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiMenuOption_t *option, UiElementMenuOption_t *previousElement, UiElementMenuOption_t *nextElement, int selectedIndex);
 void uiCreateFooter(UiElementFooter_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiOptionEntry_t *entries, UiElementBase_t *previousElement, UiElementBase_t *nextElement, int selectedIndex);
 #endif // _LIBRAC1_UI_H_
+
+
+
+
+
