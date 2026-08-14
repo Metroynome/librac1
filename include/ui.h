@@ -56,6 +56,77 @@
 #define UI_MOBYS UI_GLOBALS.uiMobys
 #define UI_RESOURCE_TABLE UI_GLOBALS.resourceTable
 
+
+typedef enum UiSpecialBytes {
+   // Font color-control bytes. FontPrint skips these bytes; FontPrintWindow
+   // uses them as palette indices when color codes are enabled.
+   UI_SPECIAL_COLOR_0          = 0x08,
+   UI_SPECIAL_COLOR_1          = 0x09,
+   UI_SPECIAL_COLOR_2          = 0x0a,
+   UI_SPECIAL_COLOR_3          = 0x0b,
+   UI_SPECIAL_COLOR_4          = 0x0c,
+   UI_SPECIAL_COLOR_5          = 0x0d,
+   UI_SPECIAL_COLOR_6          = 0x0e,
+   UI_SPECIAL_COLOR_7          = 0x0f,
+
+   UI_SPECIAL_COLOR_ORANGE     = UI_SPECIAL_COLOR_0,
+   UI_SPECIAL_COLOR_WHITE      = UI_SPECIAL_COLOR_1,
+   UI_SPECIAL_COLOR_BLUE       = UI_SPECIAL_COLOR_2,
+   UI_SPECIAL_COLOR_GREEN      = UI_SPECIAL_COLOR_3,
+   UI_SPECIAL_COLOR_RED        = UI_SPECIAL_COLOR_4,
+   UI_SPECIAL_COLOR_YELLOW     = UI_SPECIAL_COLOR_5,
+   UI_SPECIAL_COLOR_GRAY       = UI_SPECIAL_COLOR_6,
+   UI_SPECIAL_COLOR_DEFAULT    = UI_SPECIAL_COLOR_7,
+
+   // Font glyph bytes below ASCII space. These draw as 24x16 special glyphs.
+   UI_SPECIAL_GLYPH_00         = 0x00,
+   UI_SPECIAL_GLYPH_01         = 0x01,
+   UI_SPECIAL_GLYPH_02         = 0x02,
+   UI_SPECIAL_GLYPH_03         = 0x03,
+   UI_SPECIAL_GLYPH_04         = 0x04,
+   UI_SPECIAL_GLYPH_05         = 0x05,
+   UI_SPECIAL_GLYPH_06         = 0x06,
+   UI_SPECIAL_GLYPH_07         = 0x07,
+   UI_SPECIAL_GLYPH_10         = 0x10,
+   UI_SPECIAL_GLYPH_11         = 0x11,
+   UI_SPECIAL_GLYPH_12         = 0x12,
+   UI_SPECIAL_BUTTON_CROSS         = 0x10,
+   UI_SPECIAL_BUTTON_CIRCLE         = 0x11,
+   UI_SPECIAL_BUTTON_TRIANGLE         = 0x12,
+   UI_SPECIAL_GLYPH_13         = 0x13,
+   UI_SPECIAL_GLYPH_14         = 0x14,
+   UI_SPECIAL_GLYPH_15         = 0x15,
+   UI_SPECIAL_GLYPH_16         = 0x16,
+   UI_SPECIAL_GLYPH_17         = 0x17,
+   UI_SPECIAL_GLYPH_18         = 0x18,
+   UI_SPECIAL_GLYPH_19         = 0x19,
+   UI_SPECIAL_GLYPH_1A         = 0x1a,
+   UI_SPECIAL_GLYPH_1B         = 0x1b,
+   UI_SPECIAL_GLYPH_1C         = 0x1c,
+   UI_SPECIAL_GLYPH_1D         = 0x1d,
+   UI_SPECIAL_GLYPH_1E         = 0x1e,
+   UI_SPECIAL_GLYPH_1F         = 0x1f,
+
+   // Common controller glyph aliases. Verify visually before depending on a
+   // specific byte for final UI copy; these are regular font glyph indices.
+   UI_SPECIAL_SELECT           = UI_SPECIAL_GLYPH_10,
+   UI_SPECIAL_START            = UI_SPECIAL_GLYPH_11,
+   UI_SPECIAL_UP               = UI_SPECIAL_GLYPH_12,
+   UI_SPECIAL_DOWN             = UI_SPECIAL_GLYPH_13,
+   UI_SPECIAL_LEFT             = UI_SPECIAL_GLYPH_14,
+   UI_SPECIAL_RIGHT            = UI_SPECIAL_GLYPH_15,
+   UI_SPECIAL_TRIANGLE         = UI_SPECIAL_GLYPH_16,
+   UI_SPECIAL_CIRCLE           = UI_SPECIAL_GLYPH_17,
+   UI_SPECIAL_CROSS            = UI_SPECIAL_GLYPH_18,
+   UI_SPECIAL_SQUARE           = UI_SPECIAL_GLYPH_19,
+   UI_SPECIAL_L1               = UI_SPECIAL_GLYPH_1A,
+   UI_SPECIAL_R1               = UI_SPECIAL_GLYPH_1B,
+   UI_SPECIAL_L2               = UI_SPECIAL_GLYPH_1C,
+   UI_SPECIAL_R2               = UI_SPECIAL_GLYPH_1D,
+   UI_SPECIAL_L3               = UI_SPECIAL_GLYPH_1E,
+   UI_SPECIAL_R3               = UI_SPECIAL_GLYPH_1F,
+} UiSpecialBytes_e;
+
 typedef enum UiModeFlags {
    UI_FLAG_CENTER_H          = 0x00001,  // center text horizontally (width/2 offset)
    UI_FLAG_CENTER_V          = 0x00002,  // center text vertically (height/2 offset)
