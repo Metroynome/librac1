@@ -1254,7 +1254,7 @@ int uiMenuBindFrameSlot(UiMenu_t *menu, int slot, UiElementBase_t *element, M113
         return 0;
     }
 
-    uiFrameMobyAttach(moby, frame);
+    uiFrameMobyUseCustomPoints(moby, frame);
     return 1;
 }
 

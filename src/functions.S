@@ -453,6 +453,7 @@ VARIABLE_FUNCTION(mobySpawn, vaMobySpawn)
 VARIABLE_FUNCTION(mobyDestroy, vaMobyDestroy)
 VARIABLE_FUNCTION(mobySetAnimation, vaMobySetAnimation)
 VARIABLE_FUNCTION(mobyPlaySoundByIndex, vaMobyPlaySoundByIndex)
+VARIABLE_FUNCTION(soundPlay, vaSoundPlay)
 #--------------------------------------------------------
 #------------------- UI ---------------------------------
 #--------------------------------------------------------
