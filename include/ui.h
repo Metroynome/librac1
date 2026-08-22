@@ -210,7 +210,7 @@ typedef enum UiMenuElementSlot {
 
 struct UiElementBase;
 struct UiElementMenuOption;
-struct UiMenu;
+typedef struct UiMenu UiMenu_t;
 
 // Shared UI records
 
@@ -272,8 +272,8 @@ typedef struct UiMenuOption { // 0x18
 // then UiMenu_Open/Update promotes it to pActiveMenu and activeIndex.
 typedef struct UiGlobals { // 0x4f0
 /* 0x000 */ int activeIndex;
-/* 0x004 */ void *pActiveMenu;
-/* 0x008 */ void *pChangeToMenu;
+/* 0x004 */ UiMenu_t *pActiveMenu;
+/* 0x008 */ UiMenu_t *pChangeToMenu;
 /* 0x00c */ int exitAction;
 /* 0x010 */ void *pScratchBufferB;
 /* 0x014 */ int transitionTimer;
@@ -283,7 +283,7 @@ typedef struct UiGlobals { // 0x4f0
 /* 0x070 */ char pad_070[0x5b];
 /* 0x0cb */ bool resourceLoadActive;
 /* 0x0cc */ u32 savedMenuAllocCount;
-/* 0x0d0 */ void *pPreviousActiveMenu;
+/* 0x0d0 */ UiMenu_t *pPreviousActiveMenu;
 /* 0x0d4 */ char pad_0d4[0x10];
 /* 0x0e4 */ int returnPlanetId;
 /* 0x0e8 */ float savedCameraDistance;
@@ -551,7 +551,7 @@ typedef struct UiElementMobyPreview { // 0x50
 // Base menu header. The first 0x38 bytes are moby animation ids for the element
 // slots, followed by parent/id/selection pointers. Menu-specific structs below
 // are typed views over this same 0x88-byte header unless they include inline data.
-typedef struct UiMenu { // 0x88
+struct UiMenu { // 0x88
 /* 0x00 */ int mobyAnimIds[UI_MENU_MAX_ELEMENTS];
 /* 0x38 */ struct UiMenu *pParent;
 /* 0x3c */ UIMenuIds_e menuId;
@@ -560,7 +560,7 @@ typedef struct UiMenu { // 0x88
 /* 0x7c */ int elementCountOrState;
 /* 0x80 */ UiElementBase_t *pQueuedSelectedElement;
 /* 0x84 */ int queuedSelectionState;
-} UiMenu_t;
+};
 
 // Helper layout for building a custom option menu in writable memory.
 typedef struct UiCustomMenu {
@@ -899,8 +899,3 @@ void uiCreateSelectList(UiElementList_t *element, M1138_MenuItem_Pvar_t *frame, 
 void uiCreateMenuOption(UiElementMenuOption_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiMenuOption_t *option, UiElementMenuOption_t *previousElement, UiElementMenuOption_t *nextElement, int selectedIndex);
 void uiCreateFooter(UiElementFooter_t *element, M1138_MenuItem_Pvar_t *frame, const VECTOR topLeft, const VECTOR topRight, const VECTOR bottomLeft, const VECTOR bottomRight, u32 modeFlags, UiOptionEntry_t *entries, UiElementBase_t *previousElement, UiElementBase_t *nextElement, int selectedIndex);
 #endif // _LIBRAC1_UI_H_
-
-
-
-
-
