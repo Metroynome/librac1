@@ -8,12 +8,16 @@
 
 #ifdef RAC1_NTSCJ
 #define UI_GLOBALS_ADDRESS 0x001ba270
+#define UI_FRAME_ENABLES_ADDRESS 0x001b2940
 #elif RAC1_PAL_V200
 #define UI_GLOBALS_ADDRESS 0x001ba470
+#define UI_FRAME_ENABLES_ADDRESS 0x001b2b40
 #elif RAC1_PAL
 #define UI_GLOBALS_ADDRESS 0x001ba0f0
+#define UI_FRAME_ENABLES_ADDRESS 0x001b27c0
 #else
 #define UI_GLOBALS_ADDRESS 0x001ba170
+#define UI_FRAME_ENABLES_ADDRESS 0x001b2840
 #endif
 
 // Resource Table Information
@@ -594,8 +598,21 @@ typedef struct UiPauseMenu { // 0x360
 /* 0x130 */ UiElementMenuOption_t optionElements[7];
 } UiPauseMenu_t;
 
+typedef struct UiStaticMenus {
+/* 0x000 */ UiPauseMenu_t pauseMain;
+} UiStaticMenus_t;
+
+typedef struct UiStaticData {
+/* 0x000 */ int frameEnables[UI_MENU_MAX_ELEMENTS];
+/* 0x038 */ char pad_038[0x190];
+/* 0x1c8 */ UiStaticMenus_t menus;
+} UiStaticData_t;
+
+#define UI_STATIC_DATA (*(UiStaticData_t *)UI_FRAME_ENABLES_ADDRESS)
+
 typedef struct UiWeaponsMenu { // 0x88, menu header view
 /* 0x00 */ int mobyAnimIds[14];
+
 /* 0x38 */ UiMenu_t *pParent;
 /* 0x3c */ UIMenuIds_e menuId;
 /* 0x40 */ UiElementBase_t *pSelectedElement;
