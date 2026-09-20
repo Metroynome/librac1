@@ -1,6 +1,0 @@
-#ifndef _LIBRAC1_NAMESPACE_GRAPHICS_H_
-#define _LIBRAC1_NAMESPACE_GRAPHICS_H_
-
-#include "../graphics.h"
-
-#endif // _LIBRAC1_NAMESPACE_GRAPHICS_H_
