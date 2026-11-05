@@ -2,18 +2,26 @@
 
 ## Compact address tables
 
-`GetAddress` and `GetAddressImmediate` accept both the original `VariableAddress_t` and `rac1VariableAddressCompact_t`. Existing full tables keep their layout. A compact table occupies 44 bytes instead of 80, saving 36 bytes per table before linker alignment and the shared decoder cost.
+The resolver accepts original full `VariableAddress_t` tables, fixed-base `rac1VariableAddressCompact_t` tables, and selectable-base `rac1VariableAddressCompactBase_t` tables. Full-table ABI is unchanged. Fixed compact tables occupy 44 bytes; custom-base tables occupy 48 bytes on the EE.
 
 ```c
-rac1VariableAddressCompact_t vaExample = {
-	.MainMenu = RAC1_VA_COMPACT_MENU(0),
-	.Veldin1 = 0x00400000,
+/* Illustrative values; not verified game addresses. */
+rac1VariableAddressCompact_t vaFixed = {
+	.MainMenu = 0,
+	.Veldin1 = RAC1_VA_COMPACT_BASE(0x00400000),
 	.Novalis = RAC1_VA_COMPACT_OFFSET(0x00400000, 0x00400100),
+};
+
+rac1VariableAddressCompactBase_t vaCustom = {
+	.MainMenu = 0,
+	.Base = RAC1_VA_COMPACT_CUSTOM_BASE(0x00400100),
+	.Veldin1 = RAC1_VA_COMPACT_OFFSET(0x00400100, 0x00400000),
+	.Novalis = RAC1_VA_COMPACT_OFFSET(0x00400100, 0x00400100),
 };
 ```
 
-These are illustrative values, not game addresses. Always tag MainMenu, even when it has no address. Veldin1 remains a 32-bit base; later fields encode a signed word delta biased by 0x8000. Zero means unavailable; a field equal to the base encodes 0x8000. Nonzero entries must differ from the base by a multiple of four within +/-32767 words. The macro rejects constant offsets outside that range at compile time. Use a full table when it cannot fit.
+The first stored word carries the format marker: 0x80000000 for fixed-base compact, 0xc0000000 for custom-base compact. The resolver removes both marker bits before using the base. Use low EE addresses (or REL offsets), without marker bits, as OFFSET arguments. Nonzero map entries must differ from the chosen base by a multiple of four within +/-32767 words. Encoded zero is unavailable; 0x8000 represents the same address as the base. A custom base need not match any map entry, and omitted maps remain unavailable.
 
-The website's Address Table (Compact) formatter emits this layout, and falls back to a full table when its base is missing/ambiguous or a delta cannot fit. Recompile consumers against the updated headers and library. Do not index compact fields as an array of 32-bit addresses.
+`MainMenu` is a plain 32-bit address at byte 4 in both compact layouts. You may write its initializer first; designated initializer order does not control struct layout. The fixed layout stores `Veldin1` first internally; the custom layout stores `Base` first.
 
-Validation: all existing regional Makefile variants build, and compiled MIPS tests match the original resolver for full and compact tables, including menu/loading states and offset boundaries. No new PCSX2 gameplay test was performed.
+The unpublished menu/lobby-tagged compact layout has been replaced. Update old compact initializers and rebuild their consumers together with this resolver; old compact binaries are not supported by the revised menu-bearing layouts. Full tables remain compatible. librac3's existing fixed Veldin layout retains its encoding. No live PCSX2 verification was performed for this change.

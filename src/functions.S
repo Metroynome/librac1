@@ -52,10 +52,11 @@
 	li $v1, MAINMENU_DETECT_WORD3; \
 	bne $v0, $v1, miss_label; \
 	nop; \
-	lw $v0, 0x0($a0); \
-	sll $v0, $v0, 1; \
+	lw $v0, 0($a0); \
+	bgez $v0, exit_label; \
+	nop; \
 	b exit_label; \
-	srl $v0, $v0, 1; \
+	lw $v0, 4($a0); \
 miss_label:
 
 // fixed address function
@@ -143,31 +144,39 @@ __LocalGetAddress:
 	addiu $v1, $v0, 1;
 	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
-	bltz $v0, __LocalGetAddress_compact;
+	bgez $v0, __LocalGetAddress_full;
 	nop;
-	sll $v1, $v1, 2;
-	addu $v1, $a0, $v1;
-	b __LocalGetAddress_exit;
-	lw $v0, 0($v1);
-__LocalGetAddress_compact:
-	sll $v0, $v0, 1;
-	beqz $v1, __LocalGetAddress_exit;
-	srl $v0, $v0, 1;
+	beqz $v1, __LocalGetAddress_menu;
+	nop;
+	sll $t8, $v0, 1;
+	sll $v0, $v0, 2;
+	srl $v0, $v0, 2;
+	bltz $t8, __LocalGetAddress_offset_load;
+	nop;
 	addiu $v1, $v1, -1;
 	beqz $v1, __LocalGetAddress_exit;
-	lw $v0, 4($a0);
+	nop;
+__LocalGetAddress_offset_load:
 	sll $v1, $v1, 1;
 	addu $v1, $a0, $v1;
 	lhu $v1, 6($v1);
-	bnez $v1, __LocalGetAddress_offset;
+	beqz $v1, __LocalGetAddress_unavailable;
 	nop;
-	b __LocalGetAddress_exit;
-	move $v0, $zero;
-__LocalGetAddress_offset:
 	xori $v1, $v1, 0x8000;
 	sll $v1, $v1, 16;
 	sra $v1, $v1, 14;
+	b __LocalGetAddress_exit;
 	addu $v0, $v0, $v1;
+__LocalGetAddress_unavailable:
+	b __LocalGetAddress_exit;
+	move $v0, $zero;
+__LocalGetAddress_menu:
+	b __LocalGetAddress_exit;
+	lw $v0, 4($a0);
+__LocalGetAddress_full:
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	lw $v0, 0($v1);
 
 __LocalGetAddress_exit:
 	jr $a1;
@@ -211,31 +220,39 @@ GetAddress:
 	addiu $v1, $v0, 1;
 	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
-	bltz $v0, GetAddress_compact;
+	bgez $v0, GetAddress_full;
 	nop;
-	sll $v1, $v1, 2;
-	addu $v1, $a0, $v1;
-	b GetAddress_exit;
-	lw $v0, 0($v1);
-GetAddress_compact:
-	sll $v0, $v0, 1;
-	beqz $v1, GetAddress_exit;
-	srl $v0, $v0, 1;
+	beqz $v1, GetAddress_menu;
+	nop;
+	sll $t8, $v0, 1;
+	sll $v0, $v0, 2;
+	srl $v0, $v0, 2;
+	bltz $t8, GetAddress_offset_load;
+	nop;
 	addiu $v1, $v1, -1;
 	beqz $v1, GetAddress_exit;
-	lw $v0, 4($a0);
+	nop;
+GetAddress_offset_load:
 	sll $v1, $v1, 1;
 	addu $v1, $a0, $v1;
 	lhu $v1, 6($v1);
-	bnez $v1, GetAddress_offset;
+	beqz $v1, GetAddress_unavailable;
 	nop;
-	b GetAddress_exit;
-	move $v0, $zero;
-GetAddress_offset:
 	xori $v1, $v1, 0x8000;
 	sll $v1, $v1, 16;
 	sra $v1, $v1, 14;
+	b GetAddress_exit;
 	addu $v0, $v0, $v1;
+GetAddress_unavailable:
+	b GetAddress_exit;
+	move $v0, $zero;
+GetAddress_menu:
+	b GetAddress_exit;
+	lw $v0, 4($a0);
+GetAddress_full:
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	lw $v0, 0($v1);
 
 GetAddress_exit:
 	jr $ra;
@@ -267,31 +284,39 @@ GetAddressImmediate:
 	addiu $v1, $v0, 1;
 	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
-	bltz $v0, GetAddressImmediate_compact;
+	bgez $v0, GetAddressImmediate_full;
 	nop;
-	sll $v1, $v1, 2;
-	addu $v1, $a0, $v1;
-	b GetAddressImmediate_exit;
-	lw $v0, 0($v1);
-GetAddressImmediate_compact:
-	sll $v0, $v0, 1;
-	beqz $v1, GetAddressImmediate_exit;
-	srl $v0, $v0, 1;
+	beqz $v1, GetAddressImmediate_menu;
+	nop;
+	sll $t8, $v0, 1;
+	sll $v0, $v0, 2;
+	srl $v0, $v0, 2;
+	bltz $t8, GetAddressImmediate_offset_load;
+	nop;
 	addiu $v1, $v1, -1;
 	beqz $v1, GetAddressImmediate_exit;
-	lw $v0, 4($a0);
+	nop;
+GetAddressImmediate_offset_load:
 	sll $v1, $v1, 1;
 	addu $v1, $a0, $v1;
 	lhu $v1, 6($v1);
-	bnez $v1, GetAddressImmediate_offset;
+	beqz $v1, GetAddressImmediate_unavailable;
 	nop;
-	b GetAddressImmediate_exit;
-	move $v0, $zero;
-GetAddressImmediate_offset:
 	xori $v1, $v1, 0x8000;
 	sll $v1, $v1, 16;
 	sra $v1, $v1, 14;
+	b GetAddressImmediate_exit;
 	addu $v0, $v0, $v1;
+GetAddressImmediate_unavailable:
+	b GetAddressImmediate_exit;
+	move $v0, $zero;
+GetAddressImmediate_menu:
+	b GetAddressImmediate_exit;
+	lw $v0, 4($a0);
+GetAddressImmediate_full:
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	lw $v0, 0($v1);
 
 GetAddressImmediate_exit:
 	jr $ra;
