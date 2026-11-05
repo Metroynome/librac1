@@ -53,8 +53,9 @@
 	bne $v0, $v1, miss_label; \
 	nop; \
 	lw $v0, 0x0($a0); \
+	sll $v0, $v0, 1; \
 	b exit_label; \
-	nop; \
+	srl $v0, $v0, 1; \
 miss_label:
 
 // fixed address function
@@ -110,7 +111,7 @@ name:														\
 // 
 	.set	push;
 	.set	noreorder;
-	.section	.text.##__LocalGetAddress,"ax",@progbits;
+	.section	.text.__LocalGetAddress,"ax",@progbits;
 	.align 2;
 	.globl	__LocalGetAddress;
 	.type	__LocalGetAddress,@function;
@@ -139,15 +140,35 @@ __LocalGetAddress:
 	beqzl $v1, __LocalGetAddress_exit;
 	move $v0, $zero;
 	
-	// load offset into VariableAddress struct by level id
-	sll $v0, $v0, 2; // multiply level id [0,18] by 4
-	addiu $v0, $v0, 4; // skip MainMenu entry
-
-	// load address from struct
-	addu $a0, $v0;
+	addiu $v1, $v0, 1;
+	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
+	bltz $v0, __LocalGetAddress_compact;
+	nop;
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	b __LocalGetAddress_exit;
+	lw $v0, 0($v1);
+__LocalGetAddress_compact:
+	sll $v0, $v0, 1;
+	beqz $v1, __LocalGetAddress_exit;
+	srl $v0, $v0, 1;
+	addiu $v1, $v1, -1;
+	beqz $v1, __LocalGetAddress_exit;
+	lw $v0, 4($a0);
+	sll $v1, $v1, 1;
+	addu $v1, $a0, $v1;
+	lhu $v1, 6($v1);
+	bnez $v1, __LocalGetAddress_offset;
+	nop;
+	b __LocalGetAddress_exit;
+	move $v0, $zero;
+__LocalGetAddress_offset:
+	xori $v1, $v1, 0x8000;
+	sll $v1, $v1, 16;
+	sra $v1, $v1, 14;
+	addu $v0, $v0, $v1;
 
-	// return to calling function
 __LocalGetAddress_exit:
 	jr $a1;
 	nop;
@@ -158,7 +179,7 @@ __LocalGetAddress_exit:
 // 
 	.set	push;
 	.set	noreorder;
-	.section	.text.##GetAddress,"ax",@progbits;
+	.section	.text.GetAddress,"ax",@progbits;
 	.align 2;
 	.globl	GetAddress;
 	.type	GetAddress,@function;
@@ -187,15 +208,35 @@ GetAddress:
 	beqzl $v1, GetAddress_exit;
 	move $v0, $zero;
 	
-	// load offset into VariableAddress struct by level id
-	sll $v0, $v0, 2; // multiply level id [0,18] by 4
-	addiu $v0, $v0, 4; // skip MainMenu entry
-
-	// load address from struct
-	addu $a0, $v0;
+	addiu $v1, $v0, 1;
+	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
+	bltz $v0, GetAddress_compact;
+	nop;
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	b GetAddress_exit;
+	lw $v0, 0($v1);
+GetAddress_compact:
+	sll $v0, $v0, 1;
+	beqz $v1, GetAddress_exit;
+	srl $v0, $v0, 1;
+	addiu $v1, $v1, -1;
+	beqz $v1, GetAddress_exit;
+	lw $v0, 4($a0);
+	sll $v1, $v1, 1;
+	addu $v1, $a0, $v1;
+	lhu $v1, 6($v1);
+	bnez $v1, GetAddress_offset;
+	nop;
+	b GetAddress_exit;
+	move $v0, $zero;
+GetAddress_offset:
+	xori $v1, $v1, 0x8000;
+	sll $v1, $v1, 16;
+	sra $v1, $v1, 14;
+	addu $v0, $v0, $v1;
 
-	// return to calling function
 GetAddress_exit:
 	jr $ra;
 	nop;
@@ -206,7 +247,7 @@ GetAddress_exit:
 // 
 	.set	push;
 	.set	noreorder;
-	.section	.text.##GetAddress,"ax",@progbits;
+	.section	.text.GetAddress,"ax",@progbits;
 	.align 2;
 	.globl	GetAddressImmediate;
 	.type	GetAddressImmediate,@function;
@@ -223,15 +264,35 @@ GetAddressImmediate:
 	beqzl $v1, GetAddressImmediate_exit;
 	move $v0, $zero;
 	
-	// load offset into VariableAddress struct by level id
-	sll $v0, $v0, 2; // multiply level id [0,18] by 4
-	addiu $v0, $v0, 4; // skip MainMenu entry
-
-	// load address from struct
-	addu $a0, $v0;
+	addiu $v1, $v0, 1;
+	// v1 is the full-table slot index, including MainMenu at zero.
 	lw $v0, 0($a0);
+	bltz $v0, GetAddressImmediate_compact;
+	nop;
+	sll $v1, $v1, 2;
+	addu $v1, $a0, $v1;
+	b GetAddressImmediate_exit;
+	lw $v0, 0($v1);
+GetAddressImmediate_compact:
+	sll $v0, $v0, 1;
+	beqz $v1, GetAddressImmediate_exit;
+	srl $v0, $v0, 1;
+	addiu $v1, $v1, -1;
+	beqz $v1, GetAddressImmediate_exit;
+	lw $v0, 4($a0);
+	sll $v1, $v1, 1;
+	addu $v1, $a0, $v1;
+	lhu $v1, 6($v1);
+	bnez $v1, GetAddressImmediate_offset;
+	nop;
+	b GetAddressImmediate_exit;
+	move $v0, $zero;
+GetAddressImmediate_offset:
+	xori $v1, $v1, 0x8000;
+	sll $v1, $v1, 16;
+	sra $v1, $v1, 14;
+	addu $v0, $v0, $v1;
 
-	// return to calling function
 GetAddressImmediate_exit:
 	jr $ra;
 	nop;
